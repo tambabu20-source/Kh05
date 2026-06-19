@@ -1,0 +1,2270 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dashboard nhiệm vụ Tổ giúp việc Ban Chỉ đạo 152</title>
+  <style>
+    :root {
+      --ink: #172033;
+      --muted: #667085;
+      --line: #d9dee8;
+      --bg: #f5f7fb;
+      --panel: #ffffff;
+      --blue: #2563eb;
+      --green: #0f9f6e;
+      --amber: #b7791f;
+      --red: #c2410c;
+      --violet: #7c3aed;
+      --radius: 8px;
+      --shadow: 0 10px 30px rgba(15, 23, 42, .08);
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--ink);
+      background: var(--bg);
+    }
+
+    header {
+      background: #0f172a;
+      color: #fff;
+      padding: 22px 28px 18px;
+      border-bottom: 5px solid #1d4ed8;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: clamp(22px, 2.8vw, 34px);
+      letter-spacing: 0;
+      line-height: 1.18;
+    }
+
+    header p {
+      margin: 8px 0 0;
+      color: #cbd5e1;
+      max-width: 1100px;
+      line-height: 1.5;
+    }
+
+    main { padding: 18px; max-width: 1480px; margin: 0 auto; }
+
+    .toolbar {
+      display: grid;
+      grid-template-columns: minmax(220px, 1fr) 220px 220px;
+      gap: 10px;
+      align-items: center;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 12px;
+      box-shadow: var(--shadow);
+      position: sticky;
+      top: 0;
+      z-index: 5;
+    }
+
+    input, select, button {
+      height: 40px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 0 11px;
+      font-size: 14px;
+      background: #fff;
+      color: var(--ink);
+    }
+
+    button {
+      cursor: pointer;
+      background: #111827;
+      color: #fff;
+      border-color: #111827;
+      font-weight: 700;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(170px, 1fr));
+      gap: 12px;
+      margin: 14px 0;
+    }
+
+    .stat, .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .stat { padding: 14px; min-height: 92px; }
+    .stat.stat-filter {
+      cursor: pointer;
+      text-align: left;
+      transition: transform .12s ease, border-color .12s ease, box-shadow .12s ease;
+    }
+    .stat.stat-filter:hover {
+      transform: translateY(-1px);
+      border-color: #93c5fd;
+      box-shadow: 0 12px 28px rgba(37, 99, 235, .12);
+    }
+    .stat strong { display: block; font-size: clamp(22px, 2.1vw, 28px); line-height: 1.1; overflow-wrap: anywhere; }
+    .stat .unit {
+      color: #b8c0cc;
+      font-size: .48em;
+      font-style: normal;
+      font-weight: 700;
+    }
+    .stat span { display: block; margin-top: 6px; color: var(--muted); font-size: 13px; }
+
+    .grid, .paired-row, .task-pair {
+      display: grid;
+      gap: 14px;
+      align-items: start;
+    }
+    .grid { grid-template-columns: minmax(0, .95fr) minmax(0, 1.05fr); }
+    .paired-row { grid-template-columns: minmax(0, .95fr) minmax(0, 1.05fr); }
+    .task-pair { grid-template-columns: minmax(360px, .7fr) minmax(620px, 1.3fr); }
+    .panel { padding: 14px; }
+    .panel h2 { margin: 0 0 12px; font-size: 18px; }
+    .panel h3 { margin: 14px 0 8px; font-size: 15px; }
+    .side-panel {
+      min-width: 0;
+      height: 100%;
+    }
+    .side-stack { display: grid; gap: 12px; align-content: start; }
+    .leader-list {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 5px;
+    }
+    .leader {
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 7px 8px;
+      background: #fff;
+      cursor: pointer;
+    }
+    .leader.active { border-color: var(--blue); box-shadow: inset 4px 0 0 var(--blue); }
+    .leader strong { display: block; font-size: 12.5px; line-height: 1.25; }
+    .leader span { display: block; color: var(--muted); font-size: 10.5px; margin-top: 2px; line-height: 1.25; }
+    .leader-counts {
+      display: grid;
+      gap: 4px;
+      margin: 0 0 6px;
+      text-align: left;
+      color: #111827;
+      font-size: 10px;
+      font-weight: 700;
+    }
+    .leader-counts em {
+      color: var(--muted);
+      font-style: normal;
+      font-weight: 700;
+    }
+    .leader strong { clear: both; }
+
+    .tabs, .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+    .filter-block {
+      border-top: 1px dashed var(--line);
+      padding-top: 10px;
+      margin-top: 10px;
+    }
+    .filter-block:first-child {
+      border-top: 0;
+      padding-top: 0;
+      margin-top: 0;
+    }
+    .filter-label {
+      margin: 0 0 6px;
+      color: #667085;
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+    .filter-period .tab { background: #eff6ff; border-color: #bfdbfe; color: #1d4ed8; }
+    .filter-category .chip { background: #ecfdf3; border-color: #bbf7d0; color: #047857; }
+    .filter-status .chip { background: #fff7ed; border-color: #fed7aa; color: #b45309; }
+    .filter-period .tab.active { background: #1d4ed8; color: #fff; border-color: #1d4ed8; }
+    .filter-period .project-tab {
+      background: #dc2626;
+      border-color: #dc2626;
+      color: #fff;
+      box-shadow: 0 8px 18px rgba(220, 38, 38, .18);
+    }
+    .filter-category .chip.active { background: #047857; color: #fff; border-color: #047857; }
+    .filter-status .status-chip.active { background: #b45309; color: #fff; border-color: #b45309; }
+    .agency-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 12px;
+      padding-bottom: 3px;
+    }
+    .tab, .chip {
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--ink);
+      height: 34px;
+      padding: 0 10px;
+      font-weight: 700;
+    }
+    .tab.active, .chip.active { background: #1d4ed8; color: #fff; border-color: #1d4ed8; }
+    .status-chip.active { background: #111827; color: #fff; border-color: #111827; }
+    .agency-button {
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--ink);
+      height: auto;
+      min-height: 32px;
+      padding: 5px 8px;
+      font-weight: 700;
+      line-height: 1.25;
+      font-size: 11px;
+      white-space: nowrap;
+      flex: 0 1 auto;
+    }
+    .agency-button.active { background: #111827; color: #fff; border-color: #111827; }
+    .updates-strip {
+      display: grid;
+      grid-auto-flow: column;
+      grid-auto-columns: minmax(320px, 430px);
+      gap: 10px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+      scroll-snap-type: x proximity;
+    }
+    .update-card {
+      scroll-snap-align: start;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fff;
+      padding: 12px;
+      min-height: 150px;
+    }
+    .update-card.summary-card {
+      border-color: #bfdbfe;
+      background: #eff6ff;
+      min-height: 0;
+    }
+    .summary-metrics {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 5px;
+      margin: 7px 0 4px;
+    }
+    .summary-metrics span {
+      border: 1px solid #dbeafe;
+      border-radius: 6px;
+      background: #fff;
+      padding: 5px 6px;
+      font-size: 10.5px;
+      color: #475467;
+    }
+    .summary-metrics b {
+      display: flex;
+      align-items: baseline;
+      gap: 3px;
+      color: #0f172a;
+      font-size: 15px;
+      line-height: 1.1;
+      margin-bottom: 2px;
+    }
+    .summary-metrics .unit {
+      color: #b8c0cc;
+      font-size: 9.5px;
+      font-weight: 700;
+      font-style: normal;
+    }
+    .update-card strong { display: block; font-size: 14px; margin: 8px 0 6px; }
+    .update-card p { margin: 0; color: #475467; font-size: 13px; line-height: 1.45; }
+    .latest-progress-overview {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) repeat(3, minmax(92px, auto));
+      gap: 10px;
+      align-items: center;
+      margin: 0 0 12px;
+      padding: 11px 12px;
+      border: 1px solid #bfdbfe;
+      border-left: 5px solid #2563eb;
+      border-radius: var(--radius);
+      background: #eff6ff;
+    }
+    .latest-progress-overview h3 { margin: 0 0 4px; font-size: 14px; }
+    .latest-progress-overview p { margin: 0; color: #475467; font-size: 12px; line-height: 1.45; }
+    .latest-progress-metric { text-align: center; padding: 6px 8px; border-left: 1px solid #bfdbfe; }
+    .latest-progress-metric strong { display: block; color: #0f172a; font-size: 20px; line-height: 1; }
+    .latest-progress-metric span { display: block; margin-top: 4px; color: #667085; font-size: 10.5px; }
+    .update-groups {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(240px, 1fr));
+      gap: 12px;
+    }
+    .update-group {
+      min-width: 0;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #f8fafc;
+      padding: 10px;
+    }
+    .update-group h3 {
+      margin: 0 0 10px;
+      font-size: 14px;
+      line-height: 1.35;
+    }
+    .update-group-list {
+      display: grid;
+      gap: 9px;
+      max-height: 360px;
+      overflow-y: auto;
+      padding-right: 3px;
+    }
+    .update-group .update-card { min-height: 0; }
+
+    .task-list { display: grid; gap: 10px; }
+    #taskList {
+      position: relative;
+      max-height: min(760px, 72vh);
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      padding-right: 6px;
+      scrollbar-gutter: stable;
+    }
+    #taskList::before,
+    .update-group-list::before {
+      content: "cuộn để xem";
+      position: sticky;
+      top: 0;
+      justify-self: end;
+      z-index: 2;
+      width: fit-content;
+      padding: 2px 7px;
+      border-radius: 999px;
+      background: rgba(248, 250, 252, .92);
+      color: #98a2b3;
+      font-size: 10px;
+      font-weight: 700;
+    }
+    #taskList:focus { outline: 2px solid #93c5fd; outline-offset: 3px; }
+    .section-title {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 12px;
+      margin: 20px 0 12px;
+    }
+    .section-title h2 { margin: 0; font-size: 20px; }
+    .section-title p { margin: 3px 0 0; color: var(--muted); font-size: 13px; }
+    .project-tools {
+      display: grid;
+      grid-template-columns: minmax(220px, 1fr);
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .task {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fff;
+      padding: 12px;
+      display: grid;
+      grid-template-columns: 1fr 180px;
+      gap: 12px;
+    }
+    .task h3 { margin: 0 0 8px; font-size: 16px; line-height: 1.35; }
+    .project-card {
+      grid-template-columns: 1fr;
+      padding: 11px;
+      border-color: #cbd5e1;
+    }
+    .project-card.central-source {
+      border-color: #c4b5fd;
+      box-shadow: inset 5px 0 0 #7c3aed, var(--shadow);
+    }
+    .project-card.disbursement-source {
+      border-color: #fed7aa;
+      box-shadow: inset 5px 0 0 #f97316, var(--shadow);
+    }
+    .project-card h3 { font-size: 15px; }
+    .project-head {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 10px;
+      align-items: start;
+    }
+    .money-badge {
+      min-width: 132px;
+      padding: 9px 11px;
+      border-radius: 8px;
+      border: 1px solid #bfdbfe;
+      background: #eff6ff;
+      color: #1d4ed8;
+      text-align: right;
+    }
+    .money-badge strong {
+      display: block;
+      font-size: 20px;
+      line-height: 1.05;
+      color: #0f172a;
+    }
+    .money-badge span {
+      display: block;
+      margin-top: 4px;
+      font-size: 11px;
+      color: #475467;
+    }
+    .project-progress {
+      margin: 10px 0 14px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #f8fafc;
+      padding: 10px;
+    }
+    .project-progress h3 { margin: 0 0 8px; font-size: 14px; }
+    .project-progress-list {
+      display: grid;
+      gap: 5px;
+    }
+    .project-progress-row {
+      display: grid;
+      grid-template-columns: minmax(460px, 1.45fr) minmax(320px, .75fr);
+      gap: 8px;
+      align-items: center;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #fff;
+      padding: 7px 9px;
+    }
+    .project-progress-row.disbursement {
+      border-color: #fed7aa;
+      background: #fff7ed;
+    }
+    .project-progress-row.disbursement .project-stage-bar { grid-template-columns: 1fr; }
+    .project-progress-row.central {
+      border-color: #8b5cf6;
+      background: #ede9fe;
+      box-shadow: inset 6px 0 0 #6d28d9;
+    }
+    .project-progress-title strong {
+      display: block;
+      font-size: 11.5px;
+      line-height: 1.3;
+      overflow-wrap: anywhere;
+    }
+    .project-progress-title small {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--muted);
+      margin-top: 3px;
+      line-height: 1.25;
+      font-size: 11px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .source-note {
+      display: inline-flex;
+      width: fit-content;
+      max-width: 100%;
+      padding: 2px 7px;
+      border-radius: 999px;
+      font-size: 10.5px;
+      font-weight: 700;
+      line-height: 1.3;
+      white-space: nowrap;
+    }
+    .source-note.local { background: #e7f8f0; color: #047857; }
+    .source-note.central { background: #6d28d9; color: #fff; }
+    .source-note.disbursement { background: #f97316; color: #fff; }
+    .project-progress-title b { color: #0f172a; }
+    .project-progress-summary {
+      margin: 5px 0 0;
+      color: #475467;
+      font-size: 10.5px;
+      line-height: 1.35;
+    }
+    .project-stage-bar {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(42px, 1fr));
+      gap: 10px;
+      align-items: center;
+    }
+    .stage-cell {
+      position: relative;
+      min-height: 22px;
+      border: 1px solid #e5e7eb;
+      border-radius: 5px;
+      background: #f8fafc;
+      color: #667085;
+      font-size: 8.5px;
+      font-weight: 700;
+      line-height: 1.25;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      padding: 4px;
+    }
+    .stage-cell:not(:last-child)::after {
+      content: "→";
+      position: absolute;
+      right: -10px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #98a2b3;
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .stage-cell.done:not(:last-child)::after,
+    .stage-cell.current:not(:last-child)::after { color: #1d4ed8; }
+    .stage-cell.done {
+      background: #e7f8f0;
+      border-color: #9de6c6;
+      color: #047857;
+    }
+    .stage-cell.current {
+      background: #1d4ed8;
+      border-color: #1d4ed8;
+      color: #fff;
+      box-shadow: 0 8px 18px rgba(29, 78, 216, .18);
+    }
+    .project-progress-row.central .stage-cell.done {
+      background: #ede9fe;
+      border-color: #c4b5fd;
+      color: #6d28d9;
+    }
+    .project-progress-row.central .stage-cell.current {
+      background: #7c3aed;
+      border-color: #7c3aed;
+      box-shadow: 0 8px 18px rgba(124, 58, 237, .18);
+    }
+    .project-progress-row.central .stage-cell.done:not(:last-child)::after,
+    .project-progress-row.central .stage-cell.current:not(:last-child)::after { color: #7c3aed; }
+    .project-progress-row.disbursement .stage-cell.current {
+      background: #f97316;
+      border-color: #f97316;
+      box-shadow: 0 8px 18px rgba(249, 115, 22, .16);
+    }
+    .stage-cell.pending { color: #98a2b3; }
+    .project-steps {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(210px, 1fr));
+      gap: 12px;
+    }
+    .project-step {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #f8fafc;
+      padding: 10px;
+      min-width: 0;
+    }
+    .project-step h4 {
+      margin: 0 0 9px;
+      font-size: 13px;
+      line-height: 1.35;
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .project-step h4 span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .step-items { display: grid; gap: 8px; }
+    .step-item {
+      border: 1px solid #e5e7eb;
+      border-radius: 6px;
+      background: #fff;
+      padding: 9px;
+    }
+    .step-item strong {
+      display: block;
+      font-size: 13px;
+      line-height: 1.35;
+    }
+    .step-item small {
+      display: block;
+      margin-top: 5px;
+      color: var(--muted);
+      line-height: 1.35;
+    }
+    .disbursement-box {
+      margin-top: 12px;
+      border: 1px solid #bfdbfe;
+      border-radius: var(--radius);
+      background: #eff6ff;
+      padding: 12px;
+    }
+    .disbursement-box h4 { margin: 0 0 8px; font-size: 14px; }
+    .finance-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-bottom: 12px; }
+    .finance-card { border: 1px solid var(--line); border-radius: 8px; background: #fff; padding: 12px; }
+    .finance-card strong { display: block; font-size: 24px; line-height: 1.05; color: var(--ink); }
+    .finance-card span { display: block; margin-top: 5px; color: var(--muted); font-size: 12px; }
+    .finance-sources { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .finance-source {
+      min-width: 0;
+      border: 1px solid var(--line);
+      border-top: 5px solid #2563eb;
+      border-radius: 8px;
+      background: #fff;
+      padding: 14px;
+    }
+    .finance-source.central { border-top-color: #7c3aed; background: #faf7ff; }
+    .finance-source.local { border-top-color: #0f766e; background: #f4fbf9; }
+    .finance-source h3 { margin: 0; font-size: 16px; }
+    .finance-source-head {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 12px;
+      align-items: start;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--line);
+    }
+    .finance-source-head p { margin: 5px 0 0; color: var(--muted); font-size: 12px; line-height: 1.4; }
+    .finance-source-total { text-align: right; white-space: nowrap; }
+    .finance-source-total strong { display: block; font-size: 23px; color: var(--ink); }
+    .finance-source-total span { color: var(--muted); font-size: 11px; }
+    .disbursement-columns {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      align-items: end;
+      min-height: 215px;
+      padding-top: 14px;
+    }
+    .disbursement-column { display: grid; grid-template-rows: auto 128px auto; gap: 7px; min-width: 0; text-align: center; }
+    .disbursement-column > strong { font-size: 13px; line-height: 1.25; }
+    .column-track {
+      position: relative;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      width: min(58px, 78%);
+      height: 128px;
+      margin: 0 auto;
+      overflow: hidden;
+      border: 1px solid #d0d5dd;
+      border-radius: 6px 6px 3px 3px;
+      background: #eef2f6;
+    }
+    .column-fill { width: 100%; min-height: 3px; background: #0f766e; }
+    .finance-source.central .column-fill { background: #7c3aed; }
+    .column-track b {
+      position: absolute;
+      inset: 7px 2px auto;
+      z-index: 1;
+      color: #101828;
+      font-size: 12px;
+    }
+    .disbursement-column small { color: var(--muted); font-size: 11px; line-height: 1.35; }
+    .finance-caveat { margin: 12px 0 0; padding-top: 10px; border-top: 1px dashed #cbd5e1; color: #475467; font-size: 11px; line-height: 1.4; }
+    .extra-projects { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+    .meta { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 24px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      background: #eef2ff;
+      color: #1e3a8a;
+    }
+    .tag.green { background: #e7f8f0; color: #047857; }
+    .tag.amber { background: #fff7e6; color: #92400e; }
+    .tag.red { background: #fff1ed; color: #9a3412; }
+    .tag.gray { background: #eef1f5; color: #475467; }
+    .tag.violet { background: #ede9fe; color: #6d28d9; }
+    .tag.orange { background: #ffedd5; color: #c2410c; }
+    .desc { color: #475467; font-size: 13px; line-height: 1.45; margin: 0; }
+    .progress-note {
+      margin-top: 9px;
+      padding: 9px 10px;
+      border-left: 4px solid #2563eb;
+      background: #f8fbff;
+      color: #344054;
+      border-radius: 0 6px 6px 0;
+      font-size: 13px;
+      line-height: 1.45;
+    }
+    .side { display: grid; gap: 8px; align-content: start; }
+    .side select { width: 100%; height: 34px; font-size: 13px; }
+
+    .progress-row {
+      display: grid;
+      grid-template-columns: minmax(145px, 175px) 1fr minmax(82px, auto);
+      gap: 8px;
+      align-items: center;
+      margin: 9px 0;
+      font-size: 13px;
+    }
+    .bar { height: 9px; background: #e5e7eb; border-radius: 999px; overflow: hidden; }
+    .bar i { display: block; height: 100%; background: var(--green); width: 0; }
+    .chart-grid { display: grid; gap: 14px; }
+    .chart-panel {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fff;
+      padding: 12px;
+    }
+    .mini-chart {
+      margin: 0 0 14px;
+    }
+    .mini-chart .section-title {
+      margin: 0 0 8px;
+    }
+    .mini-chart .section-title h2 {
+      font-size: 17px;
+    }
+    .agency-status-box { margin: 12px 0; }
+    .agency-status-box h3 {
+      margin-top: 0;
+    }
+    .agency-status-box table {
+      table-layout: fixed;
+      font-size: 11.5px;
+    }
+    .project-jump {
+      width: 100%;
+      height: auto;
+      min-height: 38px;
+      margin: 10px 0 0;
+      padding: 8px 10px;
+      background: #dc2626;
+      border-color: #dc2626;
+      color: #fff;
+      box-shadow: 0 8px 18px rgba(220, 38, 38, .18);
+    }
+    .agency-status-box th,
+    .agency-status-box td { white-space: normal; }
+    .agency-status-box td:first-child,
+    .agency-status-box th:first-child {
+      white-space: normal;
+      width: 36%;
+    }
+    .agency-status-box td:not(:first-child),
+    .agency-status-box th:not(:first-child) {
+      text-align: center;
+      font-size: 12px;
+    }
+    .chart-panel h3 { margin-top: 0; }
+    .bar-chart { display: grid; gap: 9px; }
+    .bar-line {
+      display: grid;
+      grid-template-columns: 90px 1fr 82px 86px 72px;
+      gap: 10px;
+      align-items: center;
+      font-size: 13px;
+    }
+    .bar-line.header {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .bar-line .bar { height: 16px; }
+    .bar-line .bar i { background: #2563eb; }
+    .metric-link {
+      border: 0;
+      background: transparent;
+      color: #1d4ed8;
+      height: auto;
+      padding: 0;
+      font: inherit;
+      font-weight: 800;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+    #projectStats {
+      grid-template-columns: repeat(7, minmax(96px, 1fr));
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+    #projectStats .stat {
+      min-height: 64px;
+      padding: 9px 10px;
+    }
+    #projectStats .stat strong { font-size: 21px; }
+    #projectStats .stat span { font-size: 11px; }
+
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th, td { border-bottom: 1px solid var(--line); padding: 9px 7px; text-align: left; vertical-align: top; }
+    th { background: #f8fafc; color: #475467; font-size: 12px; text-transform: uppercase; }
+
+    .note { color: var(--muted); font-size: 12px; line-height: 1.45; margin-top: 12px; }
+
+    @media (max-width: 1020px) {
+      .toolbar { grid-template-columns: 1fr 1fr; }
+      .stats { grid-template-columns: repeat(2, minmax(150px, 1fr)); }
+      .grid, .paired-row, .task-pair { grid-template-columns: 1fr; }
+      .update-groups { grid-template-columns: repeat(2, minmax(240px, 1fr)); }
+      .project-steps { grid-template-columns: repeat(2, minmax(210px, 1fr)); }
+      .project-progress-row { grid-template-columns: 1fr; }
+      .project-stage-bar { gap: 8px; }
+    }
+    @media (max-width: 680px) {
+      main { padding: 10px; }
+      header { padding: 18px; }
+      .toolbar, .stats { grid-template-columns: 1fr; }
+      .toolbar { position: static; }
+      .tab, .chip {
+        height: auto;
+        min-height: 34px;
+        padding: 6px 8px;
+        line-height: 1.25;
+        font-size: 12px;
+      }
+      .stat { min-height: 78px; padding: 12px; }
+      .stat strong { font-size: 24px; }
+      .leader-counts {
+        grid-template-columns: 1fr 1fr;
+        text-align: left;
+        margin: 0 0 6px;
+      }
+      .leader-list { grid-template-columns: 1fr; }
+      .progress-row {
+        grid-template-columns: 1fr;
+        gap: 5px;
+      }
+      .task { grid-template-columns: 1fr; }
+      #taskList {
+        max-height: 68vh;
+        padding-right: 4px;
+      }
+      .project-tools { grid-template-columns: 1fr; }
+      .finance-grid, .finance-sources, .extra-projects { grid-template-columns: 1fr; }
+      .finance-source { padding: 11px; }
+      .disbursement-columns { min-height: 190px; gap: 6px; }
+      .disbursement-column { grid-template-rows: auto 105px auto; }
+      .column-track { height: 105px; width: min(48px, 76%); }
+      .project-head { grid-template-columns: 1fr; }
+      .money-badge { text-align: left; }
+      .updates-strip { grid-auto-columns: minmax(280px, 88vw); }
+      .latest-progress-overview { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .latest-progress-copy { grid-column: 1 / -1; }
+      .latest-progress-metric { border-left: 0; border-top: 1px solid #bfdbfe; padding: 8px 3px 2px; }
+      .update-groups { grid-template-columns: 1fr; }
+      .summary-metrics { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .summary-metrics span { padding: 5px; }
+      .summary-metrics b { font-size: 13px; }
+      .summary-metrics .unit { font-size: 8.5px; }
+      .project-steps { grid-template-columns: 1fr; }
+      .project-progress { padding: 8px; }
+      .project-progress-row {
+        padding: 8px;
+        gap: 7px;
+      }
+      .project-progress-title strong { font-size: 11px; }
+      .project-progress-title small {
+        white-space: normal;
+        overflow: visible;
+        text-overflow: clip;
+        align-items: flex-start;
+        font-size: 10px;
+      }
+      .source-note { flex: 0 0 auto; }
+      .project-stage-bar {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 6px;
+      }
+      .stage-cell {
+        min-height: 24px;
+        padding: 3px;
+        font-size: 7.5px;
+        line-height: 1.15;
+        overflow-wrap: anywhere;
+      }
+      .stage-cell:not(:last-child)::after {
+        right: -6px;
+        font-size: 8px;
+      }
+      .project-progress-row.disbursement .project-stage-bar { grid-template-columns: 1fr; }
+      #projectStats { grid-template-columns: repeat(6, minmax(92px, 1fr)); }
+      .bar-line {
+        grid-template-columns: 44px 1fr 50px 56px 50px;
+        gap: 6px;
+        font-size: 10.5px;
+      }
+      .agency-status-box table { min-width: 0; }
+      table { font-size: 12px; }
+      th, td { padding: 7px 5px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Dashboard theo dõi nhiệm vụ Tổ giúp việc Ban Chỉ đạo 152</h1>
+    <p>Kế hoạch số 05-KH/TGV ngày 19/5/2026 về cải cách hành chính, thể chế, khoa học công nghệ, đổi mới sáng tạo, chuyển đổi số và phát triển nguồn nhân lực tỉnh Đắk Lắk.</p>
+  </header>
+
+  <main>
+    <section class="toolbar">
+      <input id="search" placeholder="Tìm nhiệm vụ, sản phẩm, cơ quan, lãnh đạo...">
+      <select id="leaderFilter"></select>
+      <select id="categoryFilter"></select>
+    </section>
+
+    <section class="stats" id="stats"></section>
+
+    <section class="panel">
+      <div class="section-title">
+        <div>
+          <h2>Cập nhật tiến độ mới nhất</h2>
+          <p>Mốc báo cáo mới nhất: 12/6/2026 đến 19/6/2026. Cập nhật theo 4 nhóm nhiệm vụ chính.</p>
+        </div>
+      </div>
+      <div class="latest-progress-overview">
+        <div class="latest-progress-copy">
+          <h3>Tiến độ nhiệm vụ đến tháng 6</h3>
+          <p>Đến tháng 6/2026, toàn Tổ đã hoàn thành 15/17 nhiệm vụ; tuần này hoàn thành thêm 02 nhiệm vụ, tăng 11,7 điểm phần trăm so với tuần trước. Còn 02 nhiệm vụ đang thực hiện: Kiến trúc dữ liệu tỉnh của Sở KH&amp;CN và đánh giá chính sách đào tạo, bồi dưỡng của Sở Nội vụ.</p>
+        </div>
+        <div class="latest-progress-metric"><strong>15/17</strong><span>nhiệm vụ hoàn thành</span></div>
+        <div class="latest-progress-metric"><strong>88,2%</strong><span>tỷ lệ hoàn thành</span></div>
+        <div class="latest-progress-metric"><strong>2</strong><span>nhiệm vụ còn lại</span></div>
+      </div>
+      <div id="latestUpdates" class="updates-strip"></div>
+    </section>
+
+    <section class="panel side-panel">
+      <h2>Chỉ tiêu trọng tâm</h2>
+      <div id="indicators"></div>
+    </section>
+
+    <section class="paired-row">
+      <section class="panel" id="progressPanel"></section>
+      <section class="panel mini-chart" id="quarterChartPanel"></section>
+    </section>
+
+    <section class="task-pair">
+      <aside class="side-stack">
+        <section class="panel side-panel" id="agencyStatusPanel"></section>
+        <section class="panel side-panel">
+          <h2>Tra cứu theo lãnh đạo</h2>
+          <div class="leader-list" id="leaders"></div>
+          <p class="note">Trạng thái mặc định đã cập nhật theo Báo cáo tuần từ ngày 12/6/2026 đến ngày 19/6/2026. Các chỉnh sửa thủ công tiếp theo được lưu trong trình duyệt của máy đang dùng.</p>
+        </section>
+      </aside>
+      <section class="panel" id="taskPanel">
+        <div class="filter-block filter-period">
+          <div class="filter-label">Năm</div>
+          <div class="tabs" id="periodTabs"></div>
+        </div>
+        <div class="filter-block filter-category">
+          <div class="filter-label">Nhóm</div>
+          <div class="chips" id="categoryChips"></div>
+        </div>
+        <div class="filter-block filter-status">
+          <div class="filter-label">Tình trạng</div>
+          <div class="chips" id="statusChips"></div>
+        </div>
+        <div id="taskList" class="task-list" tabindex="0"></div>
+      </section>
+    </section>
+
+    <section class="panel" id="projectPanel">
+      <div class="section-title">
+        <div>
+          <h2>Dự án theo Thông báo số 225/TB-UBND ngày 01/6/2026</h2>
+          <p>Nguồn: Thông báo số 225/TB-UBND ngày 01/6/2026 của UBND tỉnh về phân công theo dõi mục tiêu tăng trưởng.</p>
+        </div>
+      </div>
+      <div class="project-tools">
+        <input id="projectSearch" placeholder="Tìm dự án, cơ quan, ghi chú, nguồn vốn...">
+      </div>
+      <div id="projectAgencyButtons" class="agency-buttons"></div>
+      <div class="stats" id="projectStats"></div>
+      <div id="projectTimeline" class="project-progress"></div>
+    </section>
+
+    <section class="panel" id="otherProjectPanel">
+      <div class="section-title">
+        <div>
+          <h2>Dự án khác (ngoài Thông báo 225/TB-UBND)</h2>
+          <p>Cập nhật theo Báo cáo tuần 12/6/2026-19/6/2026 và các hồ sơ dự án liên quan; không gồm dự án Sở Khoa học và Công nghệ đã đề nghị không triển khai.</p>
+        </div>
+      </div>
+      <div id="otherProjectTimeline" class="project-progress"></div>
+    </section>
+
+    <section class="panel" id="financePanel">
+      <div class="section-title">
+        <div>
+          <h2>Kinh phí KHCN, ĐMST, CĐS năm 2026</h2>
+          <p>Nguồn cập nhật: Báo cáo tuần từ ngày 12/6/2026 đến ngày 19/6/2026; Báo cáo số 228/BC-UBND ngày 17/6/2026; số liệu ngân sách địa phương đến ngày 15/6/2026.</p>
+        </div>
+      </div>
+      <div id="financeCards" class="finance-grid"></div>
+      <div id="financeSources" class="finance-sources"></div>
+    </section>
+  </main>
+
+  <script>
+    const leaders = [
+      { key: "Bùi Thanh Toàn", role: "Giám đốc Sở Khoa học và Công nghệ, Tổ phó", focus: "KHCN, đổi mới sáng tạo, chuyển đổi số, tổng hợp tiến độ" },
+      { key: "Ngô Đình Thiện", role: "Chánh Văn phòng UBND tỉnh", focus: "Kiểm soát TTHC, cắt giảm quy trình, theo dõi chỉ đạo UBND tỉnh" },
+      { key: "Trương Ngọc Tuấn", role: "Giám đốc Sở Nội vụ", focus: "Cải cách hành chính, tổ chức bộ máy, KPI, nguồn nhân lực công vụ" },
+      { key: "Lãnh đạo Sở Tư pháp", role: "Lãnh đạo Sở Tư pháp", focus: "Thể chế, QPPL, kiểm tra, rà soát, thi hành pháp luật" },
+      { key: "Lê Thị Thanh Xuân", role: "Giám đốc Sở Giáo dục và Đào tạo", focus: "Giáo dục, STEM, học bạ số, nguồn nhân lực" },
+      { key: "Lê Danh Thắng", role: "Phó Giám đốc Sở Tài chính", focus: "PCI, nguồn lực tài chính, cơ chế huy động ngoài ngân sách" },
+      { key: "Cao Thanh Sơn", role: "Phó Trưởng Thống kê tỉnh", focus: "Phương pháp tính chỉ tiêu, đánh giá đóng góp tăng trưởng" }
+    ];
+
+    const indicators = [
+      ["PAR Index", "2026 tăng tối thiểu 03 bậc; 2030 nhóm 15 tỉnh đứng đầu", "Trương Ngọc Tuấn"],
+      ["PAPI", "Cải thiện nhóm trung bình-cao; 2030 nhóm 15 tỉnh đứng đầu", "Trương Ngọc Tuấn"],
+      ["SIPAS", "Duy trì 98%; 2030 nhóm 15 tỉnh đứng đầu", "Trương Ngọc Tuấn"],
+      ["Kinh tế số trong GRDP", "2026 đạt 14%; 2030 đạt 30%", "Bùi Thanh Toàn"],
+      ["TFP đóng góp GRDP", "2026 đạt 51-52%; 2030 đạt 55%", "Cao Thanh Sơn"],
+      ["Hồ sơ trực tuyến", "2026 đạt 80%; 2030 đạt 100%", "Bùi Thanh Toàn"],
+      ["Văn bản QPPL", "100% đúng trình tự, hợp hiến, hợp pháp, khả thi", "Lãnh đạo Sở Tư pháp"],
+      ["Lao động có kỹ năng CNTT", "Đạt 70%, ưu tiên kỹ năng số và AI", "Lê Thị Thanh Xuân"]
+    ];
+
+    const tasks = [
+      t("2026-01", "2026", "Cải cách hành chính", "Kế hoạch cải thiện môi trường đầu tư kinh doanh, nâng cao PCI năm 2026", "Lê Danh Thắng", "Sở Tài chính", "Kế hoạch", "Tháng 05/2026", "UBND tỉnh"),
+      t("2026-02", "2026", "Cải cách hành chính", "Thí điểm dịch vụ hành chính công chủ động, đánh giá và nhân rộng toàn tỉnh", "Ngô Đình Thiện", "Văn phòng UBND tỉnh", "Văn bản triển khai", "Tháng 05/2026", "UBND tỉnh"),
+      t("2026-03", "2026", "Cải cách hành chính", "Đề án, kế hoạch nâng cao hiệu quả CCHC và các chỉ số giai đoạn 2026-2030", "Trương Ngọc Tuấn", "Sở Nội vụ", "Chương trình hành động, nghị quyết, kế hoạch", "Quý II/2026", "Tỉnh ủy, Đảng ủy UBND tỉnh, UBND tỉnh"),
+      t("2026-04", "2026", "Cải cách hành chính", "Quy định trách nhiệm cá nhân người đứng đầu trong lãnh đạo, chỉ đạo CCHC", "Trương Ngọc Tuấn", "Sở Nội vụ", "Quyết định ban hành quy định", "Năm 2026", "UBND tỉnh"),
+      t("2026-05", "2026", "Cải cách hành chính", "Quy chế phối hợp, phản ánh, kiểm tra giữa các cơ quan trong thực hiện CCHC", "Trương Ngọc Tuấn", "Sở Nội vụ", "Quyết định ban hành quy chế", "Năm 2026", "UBND tỉnh"),
+      t("2026-06", "2026", "Cải cách hành chính", "Kế hoạch tinh giản biên chế giai đoạn 2026-2031", "Trương Ngọc Tuấn", "Sở Nội vụ", "Kế hoạch", "Năm 2026", "UBND tỉnh"),
+      t("2026-07", "2026", "Cải cách hành chính", "Bộ chỉ số đánh giá CCHC và xếp loại chất lượng hoạt động gắn trách nhiệm người đứng đầu", "Trương Ngọc Tuấn", "Sở Nội vụ", "Quyết định", "Năm 2026 và hằng năm đến 2030", "UBND tỉnh"),
+      t("2026-08", "2026", "Cải cách hành chính", "Kiểm tra công tác CCHC tại sở, ban, ngành, UBND xã, phường", "Trương Ngọc Tuấn", "Sở Nội vụ", "Kế hoạch, thông báo, báo cáo", "Năm 2026 và hằng năm đến 2030", "UBND tỉnh, Sở Nội vụ"),
+      t("2026-09", "2026", "Cải cách hành chính", "Thông tin, tuyên truyền cải cách hành chính", "Trương Ngọc Tuấn", "Sở Nội vụ", "Kế hoạch, báo cáo, văn bản đôn đốc, cuộc thi tuyên truyền", "Năm 2026 và hằng năm đến 2030", "UBND tỉnh, Sở Nội vụ"),
+      t("2026-10", "2026", "Cải cách hành chính", "Khảo sát sự hài lòng của người dân, doanh nghiệp đối với cơ quan hành chính", "Trương Ngọc Tuấn", "Sở Nội vụ", "Báo cáo", "Năm 2026 và hằng năm đến 2030", "UBND tỉnh, Sở Nội vụ"),
+      t("2026-11", "2026", "Cải cách hành chính", "Quy chế phối hợp giữa các Ban quản lý dự án, Trung tâm Phát triển Quỹ đất, sở ngành và UBND cấp xã", "Trương Ngọc Tuấn", "Sở Nội vụ", "Quyết định", "Năm 2026", "UBND tỉnh"),
+      t("2026-12", "2026", "Cải cách hành chính", "Quy chế thành lập, tổ chức và hoạt động của tổ chức phối hợp liên ngành", "Trương Ngọc Tuấn", "Sở Nội vụ", "Quyết định", "Năm 2026", "UBND tỉnh"),
+      t("2026-13", "2026", "Cải cách hành chính", "Phân cấp quản lý nhà nước lĩnh vực tổ chức bộ máy và vị trí việc làm", "Trương Ngọc Tuấn", "Sở Nội vụ", "Quyết định", "Năm 2026", "UBND tỉnh"),
+      t("2026-14", "2026", "Cải cách hành chính", "Rà soát, sắp xếp hệ thống đơn vị sự nghiệp công lập theo hướng tinh gọn", "Trương Ngọc Tuấn", "Sở Nội vụ", "Quyết định, báo cáo, kế hoạch", "Năm 2026", "UBND tỉnh"),
+      t("2026-14a", "2026", "Cải cách hành chính", "Quy định chế độ thù lao đối với người đã nghỉ hưu giữ chức danh chủ tịch, phó chủ tịch chuyên trách hội", "Trương Ngọc Tuấn", "Sở Nội vụ", "Nghị quyết", "Năm 2026", "HĐND tỉnh"),
+      t("2026-14b", "2026", "Cải cách hành chính", "Giao biên chế công chức, số lượng người làm việc trong ĐVSNCL, biên chế hội đặc thù và hợp đồng chuyên môn nghiệp vụ năm 2026", "Trương Ngọc Tuấn", "Sở Nội vụ", "Quyết định của Chủ tịch UBND tỉnh", "Năm 2026", "Chủ tịch UBND tỉnh"),
+      t("2026-14c", "2026", "Cải cách hành chính", "Quy định chức năng, nhiệm vụ, quyền hạn cơ quan chuyên môn, phòng ban chuyên môn, ĐVSNCL thuộc UBND cấp tỉnh, UBND cấp xã", "Trương Ngọc Tuấn", "Sở Nội vụ", "Quyết định, báo cáo, kế hoạch", "Năm 2026", "UBND tỉnh"),
+      t("2026-15", "2026", "Thể chế", "Kế hoạch theo dõi việc thi hành văn bản QPPL", "Lãnh đạo Sở Tư pháp", "Sở Tư pháp", "Quyết định ban hành kế hoạch, báo cáo", "Tháng 01 và tháng 12/2026", "UBND tỉnh"),
+      t("2026-16", "2026", "Thể chế", "Xử lý văn bản QPPL chịu tác động chính quyền 02 cấp", "Lãnh đạo Sở Tư pháp", "Sở Tư pháp", "Văn bản chỉ đạo, danh mục chi tiết", "Quý II/2026", "UBND tỉnh"),
+      t("2026-17", "2026", "Thể chế", "Bãi bỏ 44 văn bản QPPL chịu tác động của sắp xếp bộ máy và chính quyền địa phương 02 cấp", "Lãnh đạo Sở Tư pháp", "Sở Tư pháp", "Quyết định", "Quý II/2026", "UBND tỉnh"),
+      t("2026-18", "2026", "Thể chế", "Cắt giảm 50% thời gian giải quyết TTHC và 50% chi phí tuân thủ năm 2026 so với 2024", "Ngô Đình Thiện", "Văn phòng UBND tỉnh, Sở Nội vụ, các sở ngành", "Quyết định của UBND tỉnh", "Quý II/2026", "UBND tỉnh"),
+      t("2026-19", "2026", "Thể chế", "Tập huấn nghiệp vụ tổ chức thi hành pháp luật tại cơ quan, đơn vị trong tỉnh", "Lãnh đạo Sở Tư pháp", "Sở Tư pháp", "Báo cáo", "Quý III/2026", "Sở Tư pháp"),
+      t("2026-20", "2026", "Thể chế", "Tổng rà soát hệ thống văn bản QPPL của HĐND, UBND, Chủ tịch UBND tỉnh", "Lãnh đạo Sở Tư pháp", "Sở Tư pháp", "Báo cáo kết quả rà soát", "Quý IV/2026", "Sở Tư pháp"),
+      t("2026-21", "2026", "Thể chế", "Kiểm tra công tác tổ chức thi hành pháp luật theo kế hoạch UBND tỉnh", "Lãnh đạo Sở Tư pháp", "Sở Tư pháp", "Quyết định đoàn kiểm tra, kết luận kiểm tra", "Quý IV/2026", "UBND tỉnh"),
+      t("2026-22", "2026", "Thể chế", "Cơ chế, chính sách hỗ trợ hệ sinh thái khởi nghiệp ĐMST và chuyển đổi số tại địa phương", "Bùi Thanh Toàn", "Sở Khoa học và Công nghệ", "Quyết định hoặc kế hoạch", "Năm 2026", "UBND tỉnh"),
+      t("2026-23", "2026", "Thể chế", "Tự kiểm tra và kiểm tra theo thẩm quyền văn bản QPPL của UBND, Chủ tịch UBND tỉnh, HĐND, UBND cấp xã", "Lãnh đạo Sở Tư pháp", "Sở Tư pháp", "Phiếu kiểm tra, báo cáo kết quả kiểm tra", "Thường xuyên", "Sở Tư pháp"),
+      t("2026-23a", "2026", "Thể chế", "Xử lý văn bản QPPL không còn phù hợp của HĐND, UBND, Chủ tịch UBND tỉnh và HĐND, UBND cấp xã phát hiện qua rà soát", "Lãnh đạo Sở Tư pháp", "Sở Tư pháp, các sở ngành, UBND cấp xã", "Văn bản bãi bỏ, sửa đổi, bổ sung, thay thế", "Năm 2026", "UBND tỉnh"),
+      t("2026-23b", "2026", "Thể chế", "Tham mưu triển khai Đề án Chiến lược hoàn thiện hệ thống pháp luật Việt Nam trong kỷ nguyên mới khi có văn bản Trung ương giao", "Lãnh đạo Sở Tư pháp", "Sở Tư pháp", "Kế hoạch triển khai, báo cáo kết quả", "Theo văn bản Trung ương", "Sở Tư pháp"),
+      t("2026-23c", "2026", "Thể chế", "Thể chế hóa các cơ chế, chính sách đặc thù ở tỉnh đã được thực tiễn chứng minh đúng, hiệu quả", "Lãnh đạo Sở Tư pháp", "Sở Tư pháp, Sở Nội vụ, Sở Tài chính, Sở KH&CN", "Văn bản QPPL của tỉnh", "Theo phân công", "HĐND tỉnh, UBND tỉnh"),
+      t("2026-23d", "2026", "Thể chế", "Tham mưu hoàn thiện văn bản QPPL về phân cấp thủ tục hành chính ở tỉnh", "Lãnh đạo Sở Tư pháp", "Sở Tư pháp, Sở Nội vụ, Sở Tài chính, Sở KH&CN, UBND cấp xã", "Văn bản QPPL của tỉnh", "Theo phân công", "Sở, ban ngành"),
+      t("2026-23e", "2026", "Thể chế", "Rà soát văn bản QPPL của HĐND, UBND, Chủ tịch UBND tỉnh và cấp xã khi có căn cứ rà soát, theo chuyên đề, lĩnh vực", "Lãnh đạo Sở Tư pháp", "Sở Tư pháp, các sở ngành, UBND cấp xã", "Báo cáo hoặc số liệu thống kê kết quả thực hiện", "Khi có căn cứ rà soát", "Các sở, ngành, UBND cấp xã"),
+      t("2026-24", "2026", "KHCN, ĐMST, CĐS", "Ban hành kiến trúc dữ liệu tỉnh bám sát Khung kiến trúc dữ liệu quốc gia", "Bùi Thanh Toàn", "Sở Khoa học và Công nghệ", "Kiến trúc dữ liệu", "Tháng 5/2026", "UBND tỉnh"),
+      t("2026-25", "2026", "KHCN, ĐMST, CĐS", "Kế hoạch triển khai các bài toán lớn về KHCN, ĐMST và CĐS của tỉnh", "Bùi Thanh Toàn", "Sở Khoa học và Công nghệ", "Kế hoạch", "Tháng 5/2026", "UBND tỉnh"),
+      t("2026-26", "2026", "KHCN, ĐMST, CĐS", "Kế hoạch xây dựng cơ sở dữ liệu chuyên ngành, cơ sở dữ liệu chung toàn tỉnh", "Bùi Thanh Toàn", "Sở Khoa học và Công nghệ", "Kế hoạch", "Tháng 5/2026", "UBND tỉnh"),
+      t("2026-27", "2026", "KHCN, ĐMST, CĐS", "Triển khai các dự án KHCN, ĐMST, CĐS năm 2026 bằng vốn đầu tư công và vốn sự nghiệp", "Bùi Thanh Toàn", "Các sở, ban, ngành, UBND xã phường", "Kế hoạch", "Tháng 5/2026", "Các sở, ban, ngành, UBND xã phường"),
+      t("2026-28", "2026", "KHCN, ĐMST, CĐS", "Xây dựng cơ chế thử nghiệm có kiểm soát trong các ngành, lĩnh vực", "Bùi Thanh Toàn", "Các sở, ban, ngành", "Văn bản báo cáo, đề xuất", "Quý II/2026", "UBND tỉnh"),
+      t("2026-29", "2026", "KHCN, ĐMST, CĐS", "Bản đồ số nông sản, sản phẩm OCOP, du lịch thôn buôn", "Bùi Thanh Toàn", "Sở Nông nghiệp và Môi trường", "Bản đồ số", "Quý II/2026", "UBND tỉnh"),
+      t("2026-30", "2026", "KHCN, ĐMST, CĐS", "Truy xuất nguồn gốc nông, lâm, thủy sản giai đoạn 2026-2030", "Bùi Thanh Toàn", "Sở Nông nghiệp và Môi trường", "Kế hoạch", "Quý II/2026", "UBND tỉnh"),
+      t("2026-31", "2026", "KHCN, ĐMST, CĐS", "Thực hiện 100% dịch vụ công đủ điều kiện trực tuyến toàn trình", "Bùi Thanh Toàn", "Các sở, ban, ngành", "Quyết định của UBND tỉnh", "Quý III/2026", "UBND tỉnh"),
+      t("2026-32", "2026", "KHCN, ĐMST, CĐS", "Xây dựng hệ thống mạng WAN tỉnh Đắk Lắk", "Bùi Thanh Toàn", "Sở Khoa học và Công nghệ", "Báo cáo tiến độ, biên bản nghiệm thu", "Quý IV/2026", "UBND tỉnh"),
+      t("2026-33", "2026", "KHCN, ĐMST, CĐS", "Đề án Phát triển Kinh tế số tỉnh Đắk Lắk giai đoạn 2026-2030", "Bùi Thanh Toàn", "Sở Khoa học và Công nghệ, Sở Tài chính", "Đề án được phê duyệt", "Quý IV/2026", "UBND tỉnh"),
+      t("2026-34", "2026", "KHCN, ĐMST, CĐS", "Triển khai Cổng thông tin dữ liệu mở", "Bùi Thanh Toàn", "Sở Khoa học và Công nghệ, doanh nghiệp viễn thông", "Kế hoạch hạ tầng 2026-2030", "Quý IV/2026", "UBND tỉnh"),
+      t("2026-35", "2026", "KHCN, ĐMST, CĐS", "Triển khai hệ thống họp không giấy tờ", "Bùi Thanh Toàn", "Các cơ quan, đơn vị của tỉnh", "Hệ thống họp không giấy tờ", "Quý IV/2026", "UBND tỉnh"),
+      t("2026-36", "2026", "KHCN, ĐMST, CĐS", "Hoàn thiện dữ liệu đất đai, rừng, thủy lợi, vùng nguyên liệu, OCOP, tài nguyên môi trường; GIS/WebGIS", "Bùi Thanh Toàn", "Sở Nông nghiệp và Môi trường", "Cơ sở dữ liệu", "Quý IV/2026", "UBND tỉnh"),
+      t("2026-37", "2026", "KHCN, ĐMST, CĐS", "Số hóa dữ liệu không gian các mỏ khoáng sản và tích hợp bản đồ trực tuyến", "Bùi Thanh Toàn", "Sở Nông nghiệp và Môi trường", "Cơ sở dữ liệu", "Quý IV/2026", "UBND tỉnh"),
+      t("2026-38", "2026", "KHCN, ĐMST, CĐS", "Triển khai cơ sở dữ liệu ngành Công Thương", "Bùi Thanh Toàn", "Sở Công Thương", "Cơ sở dữ liệu ngành Công Thương", "Quý IV/2026", "Sở Công Thương"),
+      t("2026-39", "2026", "Nguồn nhân lực", "Chính sách quản lý dữ liệu giáo dục và đào tạo", "Lê Thị Thanh Xuân", "Sở Giáo dục và Đào tạo", "Cơ sở dữ liệu ngành giáo dục", "Quý IV/2026", "Sở Giáo dục và Đào tạo"),
+      t("2026-40", "2026", "Nguồn nhân lực", "Rà soát hiện trạng thiết bị CNTT và internet tại 100% cơ sở giáo dục", "Lê Thị Thanh Xuân", "Sở Giáo dục và Đào tạo", "Báo cáo hiện trạng", "Quý IV/2026", "Sở Giáo dục và Đào tạo"),
+      t("2026-41", "2026", "Nguồn nhân lực", "Xây dựng cơ sở dữ liệu học bạ số, văn bằng số theo mã định danh cá nhân", "Lê Thị Thanh Xuân", "Sở Giáo dục và Đào tạo", "Hệ thống cơ sở dữ liệu", "Quý IV/2026", "Sở Giáo dục và Đào tạo"),
+      t("2026-42", "2026", "Nguồn nhân lực", "Bố trí kinh phí, ưu tiên hạ tầng số, phòng học, STEM; huy động xã hội hóa", "Lê Thị Thanh Xuân", "Sở Giáo dục và Đào tạo", "Kế hoạch đầu tư công, danh mục dự án, báo cáo phân bổ", "Hằng năm", "Sở Giáo dục và Đào tạo"),
+      t("2026-43", "2026", "Nguồn nhân lực", "Rà soát nhu cầu đào tạo, bồi dưỡng nguồn nhân lực chất lượng cao", "Trương Ngọc Tuấn", "Sở Nội vụ", "Báo cáo đánh giá nhu cầu, danh mục ưu tiên", "Quý II/2026", "Sở Nội vụ"),
+      t("2026-44", "2026", "Nguồn nhân lực", "Kế hoạch đào tạo, bồi dưỡng nguồn nhân lực chất lượng cao", "Trương Ngọc Tuấn", "Sở Nội vụ", "Kế hoạch UBND tỉnh, danh sách học viên", "Quý III/2026", "UBND tỉnh"),
+      t("2026-45", "2026", "Nguồn nhân lực", "Nâng cao chất lượng đội ngũ cán bộ, công chức, viên chức gắn bộ công cụ KPI", "Trương Ngọc Tuấn", "Sở Nội vụ", "Bộ tiêu chí KPI, phần mềm đánh giá", "Quý II/2026, từ 01/7/2026, cuối năm 2026", "UBND tỉnh"),
+      t("2026-45a", "2026", "Nguồn nhân lực", "Theo dõi, đánh giá hiệu quả chính sách đào tạo, bồi dưỡng", "Trương Ngọc Tuấn", "Sở Nội vụ", "Báo cáo đánh giá, kiến nghị điều chỉnh chính sách", "Định kỳ 6 tháng, hằng năm", "UBND tỉnh"),
+      t("2026-46", "2026", "Nguồn nhân lực", "Cơ chế, chính sách thu hút, trọng dụng nhân tài, chuyên gia, nhà khoa học", "Trương Ngọc Tuấn", "Sở Nội vụ", "Nghị quyết HĐND tỉnh", "Năm 2026", "HĐND tỉnh"),
+      t("2026-47", "2026", "Nguồn nhân lực", "Chính sách đào tạo, bồi dưỡng và phát triển nguồn nhân lực chất lượng cao", "Trương Ngọc Tuấn", "Sở Nội vụ", "Nghị quyết HĐND hoặc Quyết định UBND", "Năm 2026", "HĐND tỉnh, UBND tỉnh"),
+      t("2026-48", "2026", "Nguồn nhân lực", "Đề án phát triển quan hệ lao động giai đoạn 2026-2030", "Trương Ngọc Tuấn", "Sở Nội vụ", "Đề án của UBND tỉnh", "Quý I/2026", "UBND tỉnh"),
+      t("2026-49", "2026", "Nguồn nhân lực", "Nghị quyết hỗ trợ vay vốn tạo việc làm, đi làm việc ở nước ngoài theo hợp đồng", "Trương Ngọc Tuấn", "Sở Nội vụ", "Nghị quyết HĐND tỉnh", "Quý I/2026", "HĐND tỉnh"),
+      t("2026-50", "2026", "Nguồn nhân lực", "Tổng kết 10 năm Chỉ thị 08-CT/TU về dạy nghề, giải quyết việc làm", "Trương Ngọc Tuấn", "Sở Nội vụ", "Báo cáo hoặc hội nghị của Tỉnh ủy", "Quý II/2026", "Ban Thường vụ Tỉnh ủy"),
+      t("2030-01", "2027-2030", "Cải cách hành chính", "Duy trì bộ chỉ số đánh giá CCHC và xếp loại hoạt động gắn trách nhiệm người đứng đầu", "Trương Ngọc Tuấn", "Sở Nội vụ", "Quyết định", "2027-2030", "UBND tỉnh"),
+      t("2030-02", "2027-2030", "Cải cách hành chính", "Kiểm tra công tác CCHC tối thiểu 30% cơ quan, đơn vị hằng năm", "Trương Ngọc Tuấn", "Sở Nội vụ", "Kế hoạch, thông báo, báo cáo", "2027-2030", "UBND tỉnh"),
+      t("2030-03", "2027-2030", "Cải cách hành chính", "Khảo sát định kỳ, chuyên đề, đột xuất về sự hài lòng", "Trương Ngọc Tuấn", "Sở Nội vụ", "Báo cáo", "2027-2030", "UBND tỉnh, Sở Nội vụ"),
+      t("2030-04", "2027-2030", "Thể chế", "Tiếp tục triển khai Nghị quyết 66-NQ/TW và Nghị quyết 27-NQ/TW về xây dựng, thi hành pháp luật", "Lãnh đạo Sở Tư pháp", "Sở Tư pháp", "Chỉ thị, văn bản triển khai, văn bản QPPL", "2027-2030", "UBND tỉnh"),
+      t("2030-05", "2027-2030", "Thể chế", "Hoàn thiện thể chế xác lập mô hình tăng trưởng mới, chuyển quản lý từ tiền kiểm sang hậu kiểm", "Lãnh đạo Sở Tư pháp", "Sở Tư pháp, các sở ngành", "Văn bản QPPL của tỉnh", "2027-2030", "HĐND, UBND tỉnh"),
+      t("2030-06", "2027-2030", "Thể chế", "Rà soát quy định về kinh tế, đầu tư để tháo gỡ khó khăn cho doanh nghiệp và người dân", "Lãnh đạo Sở Tư pháp", "Sở Tư pháp", "Kế hoạch, báo cáo kết quả", "2027-2030", "UBND tỉnh"),
+      t("2030-07", "2027-2030", "Thể chế", "Cập nhật văn bản QPPL trên cơ sở dữ liệu văn bản pháp luật của tỉnh", "Lãnh đạo Sở Tư pháp", "Sở Tư pháp", "Văn bản được cập nhật", "2027-2030", "UBND tỉnh"),
+      t("2030-08", "2027-2030", "KHCN, ĐMST, CĐS", "Ứng dụng bản đồ số theo dõi biến động hiện trạng mỏ theo thời gian thực", "Bùi Thanh Toàn", "Sở Nông nghiệp và Môi trường", "Quyết định, văn bản", "Quý I/2027", "UBND tỉnh"),
+      t("2030-09", "2027-2030", "KHCN, ĐMST, CĐS", "Xây dựng Sàn giao dịch KH&CN Đắk Lắk online và offline", "Bùi Thanh Toàn", "Sở Khoa học và Công nghệ", "Sàn giao dịch, cơ sở dữ liệu chuyên gia công nghệ", "Quý III/2027", "UBND tỉnh"),
+      t("2030-10", "2027-2030", "KHCN, ĐMST, CĐS", "Đánh giá giữa kỳ Chương trình KH&CN trọng điểm, tính toán TFP", "Cao Thanh Sơn", "Sở Khoa học và Công nghệ, Thống kê tỉnh", "Báo cáo TFP, đánh giá tiến độ chỉ tiêu", "Quý III/2027", "Sở Khoa học và Công nghệ"),
+      t("2030-11", "2027-2030", "KHCN, ĐMST, CĐS", "Triển khai IoT và AI cho 10 vùng sản xuất nông nghiệp trọng điểm", "Bùi Thanh Toàn", "Sở Khoa học và Công nghệ", "60 xã/phường trên nền tảng dữ liệu dùng chung", "2027-2028", "UBND tỉnh"),
+      t("2030-12", "2027-2030", "KHCN, ĐMST, CĐS", "Nhân rộng mô hình 3 nhà sang 5 lĩnh vực trọng điểm", "Bùi Thanh Toàn", "Sở Khoa học và Công nghệ", "Danh sách công nghệ cốt lõi, đề xuất chương trình nghiên cứu", "2027-2028", "UBND tỉnh"),
+      t("2030-13", "2027-2030", "KHCN, ĐMST, CĐS", "Ứng dụng IoT trong ngành xây dựng, giao thông thông minh", "Bùi Thanh Toàn", "Sở Xây dựng", "IoT ngành xây dựng, giao thông thông minh", "2027-2028", "UBND tỉnh"),
+      t("2030-14", "2027-2030", "KHCN, ĐMST, CĐS", "Triển khai AI trên dữ liệu lớn cho nông nghiệp, du lịch, đô thị, y tế", "Bùi Thanh Toàn", "Sở Khoa học và Công nghệ", "Ứng dụng AI, Dashboard AI điều hành tỉnh", "Quý I/2028", "Sở Khoa học và Công nghệ"),
+      t("2030-15", "2027-2030", "Nguồn nhân lực", "Chính sách đào tạo, bồi dưỡng giảng viên và hỗ trợ người học ngành khoa học, công nghệ", "Lê Thị Thanh Xuân", "Sở Giáo dục và Đào tạo", "Nghị quyết HĐND tỉnh", "Năm 2027", "HĐND tỉnh"),
+      t("2030-16", "2027-2030", "Nguồn nhân lực", "Ưu tiên đào tạo nhân lực chất lượng cao trong công nghệ, kỹ thuật, kinh tế số", "Lê Thị Thanh Xuân", "Sở Giáo dục và Đào tạo", "Nghị quyết HĐND tỉnh", "Năm 2027", "HĐND tỉnh"),
+      t("2030-17", "2027-2030", "Nguồn nhân lực", "Đầu tư phòng học bộ môn, phòng thí nghiệm, không gian sáng tạo", "Lê Thị Thanh Xuân", "Sở Giáo dục và Đào tạo", "Kế hoạch", "Năm 2027", "UBND tỉnh"),
+      t("2030-18", "2027-2030", "Nguồn nhân lực", "Cơ chế thu hút doanh nghiệp lớn, FDI, doanh nghiệp công nghệ tham gia đào tạo", "Lê Thị Thanh Xuân", "Sở Giáo dục và Đào tạo", "Quyết định", "Năm 2027", "UBND tỉnh"),
+      t("2030-19", "2027-2030", "Nguồn nhân lực", "Đổi mới chương trình đào tạo gắn thực tiễn, kỹ năng, công nghệ và liên kết nhà nước - nhà trường - doanh nghiệp", "Lê Thị Thanh Xuân", "Sở Giáo dục và Đào tạo", "Văn bản chỉ đạo", "2027-2030", "Sở Giáo dục và Đào tạo"),
+      t("2030-20", "2027-2030", "KHCN, ĐMST, CĐS", "Hoàn thiện hạ tầng số: 99% phủ sóng 5G; 100% TTHC phi địa giới hành chính", "Bùi Thanh Toàn", "Sở Khoa học và Công nghệ", "Đạt chuẩn chính quyền số", "Quý III/2030", "Sở Khoa học và Công nghệ")
+    ];
+
+    const projects = [
+      p("prj-01", "Nâng cấp, bổ sung, mở rộng hệ thống Hội nghị truyền hình trực tuyến của Tỉnh ủy đến các đảng ủy xã, phường", "Văn phòng Tỉnh ủy", "Ngân sách địa phương", "25,98 tỷ đồng", "Kế hoạch 2026: 20 tỷ đồng; quý II ước 10 tỷ đồng, quý III 10 tỷ đồng", "Đã được phê duyệt chủ trương đầu tư tại Quyết định số 244/QĐ-UBND ngày 16/01/2026; đã giao vốn chuẩn bị đầu tư tại Quyết định số 1346/QĐ-UBND ngày 05/5/2026. Cần tiếp tục theo dõi tiến độ chuẩn bị đầu tư và giải ngân kế hoạch vốn năm 2026.", "Đang chuẩn bị đầu tư"),
+      p("prj-02", "Chỉnh lý, số hóa tài liệu lưu trữ của các cơ quan Đảng trong thực hiện sắp xếp tổ chức bộ máy hành chính các cấp", "Các cơ quan Đảng trên địa bàn tỉnh Đắk Lắk", "Ngân sách địa phương", "62,188 tỷ đồng", "Kế hoạch 2026: 31 tỷ đồng", "Thuộc Nghị quyết số 55/NQ-HĐND ngày 24/12/2025; HĐND tỉnh đã thông qua chủ trương tại Kỳ họp Chuyên đề lần thứ Nhất, Khóa XI ngày 26/5/2026. Theo dõi bước triển khai sau thông qua chủ trương và kế hoạch vốn năm 2026.", "Đã thông qua chủ trương"),
+      p("prj-03", "Xây dựng nền tảng dữ liệu số phục vụ công tác chỉ huy, điều hành an ninh trật tự Công an tỉnh Đắk Lắk", "Công an tỉnh Đắk Lắk", "Ngân sách địa phương", "51 tỷ đồng", "Kế hoạch 2026: 15,6 tỷ đồng", "Thuộc Nghị quyết số 55/NQ-HĐND ngày 24/12/2025; HĐND tỉnh đã thông qua chủ trương tại Kỳ họp Chuyên đề lần thứ Nhất, Khóa XI ngày 26/5/2026. Theo dõi bước triển khai sau chủ trương và kế hoạch vốn năm 2026.", "Đã thông qua chủ trương"),
+      p("prj-04", "Số hóa tài liệu lưu trữ tại Sở Tư pháp tỉnh Đắk Lắk", "Sở Tư pháp", "Ngân sách địa phương", "10,908 tỷ đồng", "Năm 2026 chuẩn bị đầu tư; năm 2026-2027 thực hiện và kết thúc đầu tư", "Đang trong giai đoạn lập Báo cáo đề xuất chủ trương đầu tư theo danh mục ban đầu. Cập nhật mới: đã phê duyệt chủ trương đầu tư theo Quyết định 1810/QĐ-UBND; mục tiêu chỉnh lý, xác định giá trị tài liệu tồn đọng và số hóa 70% tổng khối lượng tài liệu.", "Đã phê duyệt chủ trương"),
+      p("prj-05", "Triển khai Hệ thống trợ lý ảo hỗ trợ cán bộ, công chức, viên chức", "Sở Khoa học và Công nghệ", "Ngân sách địa phương", "18 tỷ đồng", "Thuộc phần vốn đầu tư công còn lại năm 2026", "UBND tỉnh đã phê duyệt chủ trương đầu tư tại Quyết định số 1894/QĐ-UBND ngày 17/6/2026; chuyển sang theo dõi triển khai thực hiện.", "Đang thực hiện"),
+      p("prj-06", "Triển khai nền tảng tổng hợp, phân tích dữ liệu NDAP cấp tỉnh phục vụ chỉ đạo, điều hành dựa trên dữ liệu", "Sở Khoa học và Công nghệ", "Ngân sách địa phương", "10,28 tỷ đồng", "Không tiếp tục bố trí trong danh mục dự kiến", "Sở Khoa học và Công nghệ đề nghị không triển khai do không còn phù hợp với giai đoạn hiện nay tại Công văn số 2234/SKHCN-KHTC ngày 28/5/2026.", "Dừng/không triển khai"),
+      p("prj-07", "Triển khai hệ thống Họp không giấy tờ", "Sở Khoa học và Công nghệ", "Ngân sách địa phương", "9 tỷ đồng", "Thuộc phần vốn đầu tư công còn lại năm 2026", "UBND tỉnh đã phê duyệt chủ trương đầu tư tại Quyết định số 1895/QĐ-UBND ngày 17/6/2026; chuyển sang theo dõi triển khai thực hiện.", "Đang thực hiện"),
+      p("prj-08", "Tổ chức ứng dụng trí tuệ nhân tạo trên dữ liệu lớn trong các ngành, lĩnh vực quan trọng", "Sở Khoa học và Công nghệ", "Ngân sách địa phương", "17 tỷ đồng", "Cập nhật sáng 17/6/2026: đã xong phê duyệt, chuyển sang triển khai", "Dự án đã qua bước phê duyệt theo cập nhật sáng 17/6/2026; tiếp tục theo dõi triển khai ứng dụng AI trên dữ liệu lớn trong các ngành, lĩnh vực quan trọng.", "Đang thực hiện"),
+      p("prj-09", "Xây dựng hệ thống mạng WAN tỉnh Đắk Lắk", "Sở Khoa học và Công nghệ", "Ngân sách Trung ương", "96,099 tỷ đồng", "Đề nghị ngân sách Trung ương hỗ trợ giai đoạn 2026-2030", "Thuộc nhóm 03 dự án đề nghị Trung ương hỗ trợ tổng cộng 709,099 tỷ đồng; tiếp tục theo dõi hồ sơ dự án và nguồn vốn.", "Đang chuẩn bị đầu tư"),
+      p("prj-10", "Ủy thác cho Ngân hàng Chính sách xã hội để cho vay đối với người nghèo và các đối tượng chính sách khác", "Ngân hàng Chính sách xã hội tỉnh", "Theo dõi giải ngân", "270 tỷ đồng", "Kế hoạch vốn 2026: 270 tỷ đồng; ngân sách tỉnh 120 tỷ đồng, nguồn thu tiền sử dụng đất 150 tỷ đồng", "Giao theo dõi riêng kế hoạch đầu tư công năm 2026. Chưa cập nhật số tiền giải ngân trong dashboard; sẽ bổ sung khi có báo cáo giải ngân mới.", "Theo dõi giải ngân")
+    ];
+
+    const otherProjects = [
+      {
+        name: "Nâng cấp hạ tầng công nghệ thông tin phục vụ hoạt động của Trung tâm Phục vụ hành chính công cấp xã",
+        agency: "UBND 102 xã, phường",
+        total: "314 tỷ đồng",
+        status: "Đang chuẩn bị",
+        detail: "102/102 xã, phường đăng ký dự án nhằm đáp ứng yêu cầu vận hành mô hình chính quyền địa phương hai cấp.",
+        source: "Báo cáo TGV khoa học và công nghệ, nhóm tổng hợp nhu cầu vốn khối xã, phường."
+      },
+      {
+        name: "Đầu tư cơ sở hạ tầng, trang thiết bị và phần mềm phục vụ triển khai hồ sơ Bệnh án điện tử giai đoạn 2026-2030",
+        agency: "Sở Y tế",
+        total: "313 tỷ đồng",
+        status: "Đang chuẩn bị",
+        detail: "Một trong 03 dự án đề nghị ngân sách Trung ương hỗ trợ trong giai đoạn 2026-2030.",
+        source: "Ngân sách Trung ương; Báo cáo số 228/BC-UBND ngày 17/6/2026."
+      },
+      {
+        name: "Nâng cao hiệu quả hoạt động thông tin cơ sở dựa trên ứng dụng công nghệ thông tin giai đoạn 2026-2030",
+        agency: "Sở Khoa học và Công nghệ",
+        total: "300 tỷ đồng",
+        status: "Đang chuẩn bị",
+        detail: "Một trong 03 dự án đề nghị ngân sách Trung ương hỗ trợ trong giai đoạn 2026-2030.",
+        source: "Ngân sách Trung ương; Báo cáo số 228/BC-UBND ngày 17/6/2026."
+      },
+      {
+        name: "Xây dựng và triển khai ứng dụng IoT trong ngành xây dựng, giao thông thông minh",
+        agency: "Sở Xây dựng",
+        total: "65 tỷ đồng",
+        status: "Đang thực hiện",
+        detail: "UBND tỉnh đã phê duyệt chủ trương đầu tư tại Quyết định số 1746/QĐ-UBND ngày 05/6/2026; đề xuất phân bổ kế hoạch đầu tư công năm 2026 là 1,5 tỷ đồng tại Tờ trình số 452/TTr-ĐU ngày 15/6/2026.",
+        source: "Báo cáo tuần 12/6/2026-19/6/2026, mục 4.2.b."
+      },
+      {
+        name: "Xây dựng hạ tầng kỹ thuật và công nghệ Tòa soạn hội tụ",
+        agency: "Báo và Phát thanh, Truyền hình Đắk Lắk",
+        total: "36,436 tỷ đồng",
+        status: "Đang chủ trương",
+        detail: "Đơn vị đang xin ý kiến Tỉnh ủy về chủ trương đầu tư và giao đơn vị làm chủ đầu tư.",
+        source: "Báo cáo tuần 12/6/2026-19/6/2026, mục 4.2."
+      },
+      {
+        name: "Triển khai Hệ thống cơ sở dữ liệu ngành Xây dựng tỉnh Đắk Lắk",
+        agency: "Sở Xây dựng",
+        total: "18,8 tỷ đồng",
+        status: "Đang chủ trương",
+        detail: "UBND tỉnh đang lấy ý kiến Bộ Công an để làm cơ sở phê duyệt chủ trương dự án tại Công văn số 8133/UBND-ĐTKT ngày 06/6/2026.",
+        source: "Báo cáo tuần 12/6/2026-19/6/2026, mục 4.2.b."
+      },
+      {
+        name: "Ứng dụng Trí tuệ nhân tạo không gian địa lý (GeoAI), công nghệ viễn thám trong giám sát sử dụng đất và hỗ trợ đánh giá quy hoạch sử dụng đất",
+        agency: "Sở Khoa học và Công nghệ",
+        total: "18 tỷ đồng",
+        status: "Đang thực hiện sau bước phê duyệt chủ trương",
+        detail: "UBND tỉnh đã phê duyệt chủ trương đầu tư tại Quyết định số 1896/QĐ-UBND ngày 17/6/2026; chuyển sang theo dõi triển khai thực hiện.",
+        source: "Báo cáo tuần 12/6/2026-19/6/2026, mục 4.2.a."
+      },
+      {
+        name: "Xây dựng Cổng thông tin dữ liệu mở tỉnh Đắk Lắk",
+        agency: "Sở Khoa học và Công nghệ",
+        total: "5 tỷ đồng",
+        status: "Đang thực hiện sau bước phê duyệt chủ trương",
+        detail: "UBND tỉnh đã phê duyệt chủ trương đầu tư tại Quyết định số 1893/QĐ-UBND ngày 17/6/2026; chuyển sang theo dõi triển khai thực hiện.",
+        source: "Báo cáo tuần 12/6/2026-19/6/2026, mục 4.2.a."
+      }
+    ];
+
+    const financeSources = [
+      {
+        type: "central",
+        title: "NGÂN SÁCH TRUNG ƯƠNG",
+        total: "709,099 tỷ đồng",
+        totalLabel: "Nhu cầu đề nghị hỗ trợ",
+        note: "03 dự án: Bệnh án điện tử 313 tỷ đồng; thông tin cơ sở 300 tỷ đồng; mạng WAN 96,099 tỷ đồng.",
+        columns: [
+          { label: "Đề nghị", value: "709,099", percent: 100, note: "tỷ đồng" },
+          { label: "Đã bố trí", value: "Chưa có", percent: 0, note: "chưa có số giao vốn" },
+          { label: "Giải ngân", value: "Chưa có", percent: 0, note: "chưa có số giải ngân" }
+        ],
+        caveat: "Nguồn Trung ương đang ở bước đề nghị hỗ trợ; không quy đổi 0% giải ngân khi chưa có số vốn được giao."
+      },
+      {
+        type: "local",
+        title: "NGÂN SÁCH ĐỊA PHƯƠNG",
+        total: "549,220 tỷ đồng",
+        totalLabel: "Dự toán đã bố trí",
+        note: "Chi thường xuyên 219,220 tỷ đồng; chi đầu tư 330 tỷ đồng. Số liệu cập nhật đến 15/6/2026.",
+        columns: [
+          { label: "Vốn đầu tư", value: "330", percent: 100, note: "tỷ đồng kế hoạch" },
+          { label: "Đã phân bổ", value: "96,6", percent: 29.27, note: "29,27% kế hoạch" },
+          { label: "Đã giải ngân", value: "11,086", percent: 11.48, note: "11,48% vốn phân bổ" }
+        ],
+        caveat: "Giải ngân vốn đầu tư đạt 3,36% kế hoạch vốn được giao. Báo cáo chưa nêu số giải ngân chi thường xuyên tại mốc 15/6/2026."
+      }
+    ];
+
+    const reportUpdates = {
+      "2026-01": {
+        status: "Hoàn thành",
+        progress: `Đã báo cáo và trình UBND tỉnh Kết quả công bố chỉ số PCI năm 2025 và kế hoạch nâng cao chỉ số PCI trong thời gian đến (Báo cáo số 303/BC-STC ngày 20/5/2026).`
+      },
+      "2026-02": {
+        status: "Hoàn thành",
+        progress: `Ngày 07/5/2026, Văn phòng UBND tỉnh đã chủ trì làm việc với các sở, ngành về mô hình Dịch vụ công trực tuyến chủ động và Kiosk Hành chính công thông minh; đã báo cáo UBND tỉnh tại Báo cáo số 332/BC-VPUBND ngày 15/5/2026. Các cơ quan thống nhất đăng ký thí điểm 16 TTHC và giao Văn phòng UBND tỉnh tiếp tục hoàn thiện phương án.`
+      },
+      "2026-03": {
+        status: "Đang thực hiện",
+        progress: `Sở Nội vụ đã có Công văn số 2400/SNV-CCHC&VTLT ngày 29/4/2026 tham mưu dự thảo Nghị quyết của Đảng ủy UBND tỉnh về đẩy mạnh CCHC, xây dựng và nâng cao chất lượng đội ngũ cán bộ, công chức, viên chức và người lao động. Sở Nội vụ đang lấy ý kiến các cơ quan, đơn vị, địa phương về chương trình hành động CCHC giai đoạn 2026-2030.`
+      },
+      "2026-15": {
+        status: "Hoàn thành",
+        progress: `Đã tham mưu Chủ tịch UBND tỉnh ban hành Kế hoạch số 16/KH-UBND ngày 21/01/2026 về theo dõi tình hình thi hành văn bản quy phạm pháp luật trên địa bàn tỉnh Đắk Lắk năm 2026.`
+      },
+      "2026-16": {
+        status: "Hoàn thành",
+        progress: `Đã hoàn thành. Có Công văn số 5377/UBND-NC ngày 21/4/2026 đôn đốc xử lý văn bản QPPL chịu tác động của việc sắp xếp tổ chức bộ máy và tổ chức chính quyền địa phương 02 cấp; Thông báo số 163/TB-UBND ngày 28/04/2026 kết luận của Phó Chủ tịch Thường trực UBND tỉnh Hồ Thị Nguyên Thảo tại cuộc họp rà soát, xử lý văn bản QPPL.`
+      },
+      "2026-17": {
+        status: "Hoàn thành",
+        progress: `Đã trình UBND tỉnh dự thảo Quyết định bãi bỏ một số quyết định QPPL do UBND tỉnh Đắk Lắk và UBND tỉnh Phú Yên ban hành trước sắp xếp đơn vị hành chính cấp tỉnh (Tờ trình số 101/TTr-STP ngày 25/5/2026).`
+      },
+      "2026-18": {
+        status: "Đang thực hiện",
+        progress: `Ngày 29/10/2025, Chủ tịch UBND tỉnh ban hành Quyết định số 01815/QĐ-UBND bãi bỏ 01 TTHC đặc thù. Ngày 19/5/2026, ban hành Quyết định số 1448/QĐ-UBND phê duyệt phương án cắt giảm, đơn giản hóa TTHC năm 2026, gồm cắt giảm 50% thời gian giải quyết đối với 03 TTHC và bãi bỏ 02 TTHC, đạt chỉ tiêu Trung ương giao.`
+      },
+      "2026-24": {
+        status: "Đang thực hiện",
+        progress: `Ngày 11/5/2026, Sở Khoa học và Công nghệ ban hành Công văn số 1824/SKHCN-CĐS về cung cấp thông tin và phối hợp khảo sát xây dựng Khung Kiến trúc dữ liệu, Khung quản trị, quản lý dữ liệu tỉnh Đắk Lắk. Xin gia hạn hoàn thành trước ngày 20/7/2026 theo Báo cáo số 159/BC-SKHCN ngày 13/5/2026.`
+      },
+      "2026-25": {
+        status: "Đang thực hiện",
+        progress: `Ngày 30/04/2026, Sở Khoa học và Công nghệ ban hành Công văn số 1688/SKHCN-CĐS về xây dựng nội dung Kế hoạch triển khai các bài toán lớn về KHCN, ĐMST và CĐS. Ngày 21/05/2026 ban hành Công văn 2037/SKHCN-CĐS đề nghị gia hạn và hoàn thiện kế hoạch, dự kiến trình UBND tỉnh trước ngày 02/6/2026.`
+      },
+      "2026-26": {
+        status: "Đang thực hiện",
+        progress: `Kế hoạch số 129/KH-UBND ngày 21/4/2026 về triển khai Chiến lược dữ liệu đến năm 2030 đã hoàn thành. Khung Kiến trúc dữ liệu, Khung quản trị, quản lý dữ liệu tỉnh đang khảo sát, đánh giá với MobiFone theo Công văn số 1824/SKHCN-CĐS ngày 11/05/2026; dự kiến hoàn thành 30/6/2026 và trình UBND tỉnh phê duyệt trước 10/7/2026.`
+      },
+      "2026-27": {
+        status: "Đang thực hiện",
+        progress: `UBND tỉnh đã ban hành Công văn số 7018/UBND-KGVX ngày 21/5/2026 giao các sở, ban, ngành, UBND các xã, phường là chủ đầu tư các dự án xây dựng kế hoạch triển khai thực hiện, hoàn thành trước 25/5/2026.`
+      },
+      "2026-43": {
+        status: "Đang thực hiện",
+        progress: `Ngày 10/5/2026, Sở Nội vụ ban hành Công văn 2574/SNV-CCVC về rà soát, xác định danh mục các ngành, nghề thuộc lĩnh vực chiến lược, trọng điểm của tỉnh. Sở Nội vụ đang thực hiện, chưa có báo cáo UBND tỉnh.`
+      },
+      "2026-45": {
+        status: "Hoàn thành",
+        progress: `Ngày 30/3/2026, UBND tỉnh ban hành Kế hoạch số 99/KH-UBND về triển khai đánh giá, xếp loại chất lượng công chức. Ngày 24/4/2026 ban hành Quyết định số 1294/QĐ-UBND ủy quyền phê duyệt danh mục sản phẩm/công việc. Ngày 28/5/2026, UBND tỉnh ban hành Công văn số 7527/UBND-NV thống nhất chủ trương thí điểm hệ thống KPI và giao Sở Nội vụ chủ trì hướng dẫn triển khai.`
+      },
+      "2026-45a": {
+        status: "Đang thực hiện",
+        progress: `Nội dung căn cứ Nghị định số 171/2025/NĐ-CP ngày 30/6/2025 và Thông tư số 03/2026/TT-BNV ngày 26/3/2026. UBND tỉnh đã triển khai tại Công văn số 0839/UBND-NV ngày 16/7/2025 và Công văn số 4145/UBND-NV ngày 30/3/2026; hiện chưa nhận được nội dung tham mưu của Sở Nội vụ đối với các nhiệm vụ được giao cho UBND cấp tỉnh.`
+      },
+      "2026-48": {
+        status: "Hoàn thành",
+        progress: `UBND tỉnh đang xem xét ban hành Quyết định phê duyệt Đề án theo Tờ trình số 422/TTr-SNV ngày 20/04/2026 về Đề án Phát triển quan hệ lao động trong tình hình mới trên địa bàn tỉnh Đắk Lắk giai đoạn 2026-2030.`
+      },
+      "2026-49": {
+        status: "Hoàn thành",
+        progress: `UBND tỉnh có Tờ trình số 136/TTr-UBND ngày 20/05/2026 xin ý kiến về dự thảo Tờ trình của UBND tỉnh và dự thảo Nghị quyết của HĐND tỉnh quy định đối tượng được vay vốn từ nguồn vốn ngân sách địa phương ủy thác cho Ngân hàng Chính sách xã hội với mức lãi suất thấp hơn.`
+      },
+      "2026-50": {
+        status: "Hoàn thành",
+        progress: `Sở Nội vụ đã có Công văn số 2682/SNV-LĐVL ngày 14/5/2026 tham mưu UBND tỉnh; Văn phòng đang rà soát tham mưu UBND tỉnh báo cáo Đảng ủy UBND tỉnh.`
+      },
+      "2026-15": {
+        status: "Hoàn thành",
+        date: "12/6/2026",
+        progress: `Đã hoàn thành. Sở Tư pháp đã tham mưu Chủ tịch UBND tỉnh ban hành Kế hoạch số 16/KH-UBND ngày 21/01/2026 về theo dõi tình hình thi hành văn bản quy phạm pháp luật trên địa bàn tỉnh Đắk Lắk năm 2026.`
+      },
+      "2026-16": {
+        status: "Hoàn thành",
+        date: "12/6/2026",
+        progress: `Đã hoàn thành. Có Công văn số 5377/UBND-NC ngày 21/4/2026 đôn đốc xử lý văn bản QPPL chịu tác động của việc sắp xếp tổ chức bộ máy và tổ chức chính quyền địa phương 02 cấp; Thông báo số 163/TB-UBND ngày 28/04/2026; Công văn số 7839/UBND-NC ngày 02/6/2026 triển khai công tác tổng rà soát và xử lý văn bản QPPL chịu tác động của sắp xếp tổ chức bộ máy, chính quyền địa phương 02 cấp; Kế hoạch số 218/KH-UBND ngày 01/6/2026 về xây dựng văn bản QPPL năm 2026.`
+      },
+      "2026-17": {
+        status: "Hoàn thành",
+        date: "12/6/2026",
+        progress: `Đã hoàn thành. Sở Tư pháp đã tham mưu UBND tỉnh ban hành Quyết định số 1714/QĐ-UBND ngày 03/6/2026 bãi bỏ một số quyết định QPPL do UBND tỉnh Đắk Lắk và UBND tỉnh Phú Yên ban hành trước sắp xếp đơn vị hành chính cấp tỉnh.`
+      },
+      "2026-18": {
+        status: "Hoàn thành",
+        date: "12/6/2026",
+        progress: `Ngày 19/5/2026, Chủ tịch UBND tỉnh ban hành Quyết định số 1448/QĐ-UBND phê duyệt phương án cắt giảm, đơn giản hóa TTHC năm 2026, gồm cắt giảm 50% thời gian giải quyết đối với 03 TTHC và bãi bỏ 02 TTHC, đạt chỉ tiêu Trung ương giao. Các sở, ngành đã triển khai phương án; Sở Xây dựng và Sở Công Thương đã tham mưu ban hành Quyết định số 1705/QĐ-UBND và 1699/QĐ-UBND ngày 02/6/2026 để công bố, điều chỉnh TTHC liên quan.`
+      },
+      "2026-19": {
+        status: "Đang thực hiện",
+        date: "11/6/2026",
+        progress: `Sở Tư pháp đã ban hành Kế hoạch số 38/KH-STP ngày 27/5/2026 bồi dưỡng kiến thức, kỹ năng về xây dựng và thi hành pháp luật cho đội ngũ cán bộ, công chức các sở, ban, ngành ở tỉnh và cấp xã.`
+      },
+      "2026-20": {
+        status: "Đang thực hiện",
+        date: "11/6/2026",
+        progress: `Đã tham mưu UBND tỉnh ban hành Kế hoạch số 128/KH-UBND ngày 21/4/2026 về tổng rà soát hệ thống văn bản QPPL; tham mưu Chủ tịch UBND tỉnh ban hành Quyết định số 1397/QĐ-UBND ngày 13/5/2026 thành lập Tổ công tác và Tổ giúp việc; Tổ trưởng Tổ công tác ban hành Quyết định số 94/QĐ-TCT ngày 28/5/2026 phân công nhiệm vụ thành viên.`
+      },
+      "2026-21": {
+        status: "Đang thực hiện",
+        date: "11/6/2026",
+        progress: `Sở Tư pháp đã tham mưu UBND tỉnh ban hành Kế hoạch số 16/KH-UBND ngày 21/01/2026 theo dõi việc thi hành văn bản QPPL; có Công văn số 1369/STP-NV2 ngày 05/6/2026 đề nghị cử cán bộ tham gia Đoàn kiểm tra việc thi hành văn bản QPPL trong lĩnh vực an toàn thực phẩm.`
+      },
+      "2026-23": {
+        status: "Đang thực hiện",
+        date: "11/6/2026",
+        progress: `Từ ngày 01/01/2026 đến ngày 11/6/2026, Sở Tư pháp đã giúp UBND tỉnh tự kiểm tra 45 văn bản QPPL, giúp Chủ tịch UBND tỉnh tự kiểm tra 03 văn bản QPPL; đồng thời giúp UBND tỉnh kiểm tra theo thẩm quyền 01 văn bản QPPL của HĐND cấp xã.`
+      },
+      "2026-43": {
+        status: "Hoàn thành",
+        date: "12/6/2026",
+        progress: `Ngày 03/6/2026, Sở Nội vụ báo cáo UBND tỉnh tại Báo cáo số 239/BC-SNV, đề xuất danh mục các ngành, nghề thuộc lĩnh vực chiến lược, trọng điểm trên địa bàn tỉnh Đắk Lắk giai đoạn 2026-2030, định hướng đến năm 2045. Trên cơ sở đó, UBND tỉnh ban hành Quyết định danh mục các ngành, nghề lĩnh vực chiến lược, trọng điểm.`
+      },
+      "2026-45a": {
+        status: "Đang thực hiện",
+        date: "12/6/2026",
+        progress: `Nội dung quy định tại Nghị định số 171/2025/NĐ-CP ngày 30/6/2025 và Thông tư số 03/2026/TT-BNV ngày 26/3/2026. UBND tỉnh đã triển khai tại Công văn số 0839/UBND-NV ngày 16/7/2025 và Công văn số 4145/UBND-NV ngày 30/3/2026; hiện chưa nhận được nội dung tham mưu của Sở Nội vụ đối với các nhiệm vụ được giao cho UBND cấp tỉnh.`
+      },
+      "2030-04": {
+        status: "Đang thực hiện",
+        date: "11/6/2026",
+        progress: `Sở Tư pháp đang triển khai Nghị quyết 66-NQ/TW và Nghị quyết 27-NQ/TW: đã tham mưu nhiều kế hoạch/công văn về xây dựng, kiểm tra, rà soát, xử lý văn bản QPPL; ban hành Công văn số 1215/STP-NV1 ngày 22/5/2026 hướng dẫn trình tự, thủ tục xây dựng, ban hành văn bản QPPL; Công văn số 1228/STP-NV1 ngày 25/5/2026 đề nghị chính sách; Kế hoạch số 38/KH-STP ngày 27/5/2026 bồi dưỡng kỹ năng; hiện đang xây dựng dự thảo Chỉ thị của Chủ tịch UBND tỉnh về đổi mới công tác xây dựng và thi hành pháp luật.`
+      },
+      "2030-05": {
+        status: "Đang thực hiện",
+        date: "11/6/2026",
+        progress: `Từ ngày 01/01/2026 đến ngày 11/6/2026, Sở Tư pháp đã tham gia góp ý 289 lượt dự thảo Tờ trình đăng ký và dự thảo văn bản QPPL của tỉnh; thẩm định 62 lượt dự thảo văn bản QPPL. Việc góp ý, thẩm định góp phần kiểm soát nội dung, thẩm quyền, trình tự, thủ tục ban hành và phục vụ chuyển mạnh từ tiền kiểm sang hậu kiểm.`
+      },
+      "2030-06": {
+        status: "Đang thực hiện",
+        date: "11/6/2026",
+        progress: `Quá trình tổng rà soát theo Kế hoạch số 128/KH-UBND ngày 21/4/2026 tập trung vào quy định về đầu tư, sản xuất, kinh doanh, đất đai, xây dựng và các lĩnh vực tác động trực tiếp đến người dân, doanh nghiệp. Sở Tư pháp phối hợp Sở Tài chính rà soát điều kiện đầu tư, kinh doanh không cần thiết và quy định chồng chéo theo Công văn số 1138/STP-NV2 ngày 18/5/2026.`
+      },
+      "2030-07": {
+        status: "Hoàn thành",
+        date: "11/6/2026",
+        progress: `Từ ngày 01/01/2026 đến ngày 11/6/2026, Sở Tư pháp đã cập nhật 04 Nghị quyết của HĐND tỉnh, 45 Quyết định của UBND tỉnh, 03 Quyết định của Chủ tịch UBND tỉnh lên Cơ sở dữ liệu quốc gia về pháp luật đúng thời hạn quy định.`
+      },
+      "2026-18": {
+        status: "Hoàn thành",
+        date: "12/6/2026",
+        progress: `Tỉnh đã hoàn thành chỉ tiêu cắt giảm TTHC theo Quyết định số 1448/QĐ-UBND ngày 19/5/2026. Báo cáo tuần 05/6-12/6 ghi nhận rà soát 349 TTHC trọng tâm, đề xuất đơn giản hóa 14 TTHC và được UBND tỉnh phê duyệt tại các Quyết định số 1153/QĐ-UBND, 1163/QĐ-UBND ngày 09/4/2026 và Quyết định số 1787/QĐ-UBND ngày 10/6/2026. Riêng Sở NN&MT đã trình phương án cắt giảm 116 TTHC, đạt 62% so với tổng số TTHC năm 2024 của ngành.`
+      },
+      "2026-25": {
+        status: "Đang thực hiện",
+        date: "11/6/2026",
+        progress: `Sở Giáo dục và Đào tạo đã lập Kế hoạch bài toán lớn về phát triển KHCN, ĐMST và CĐS của ngành gửi Sở Khoa học và Công nghệ; tổng kinh phí dự kiến đầu tư giai đoạn 2026-2030 là 2.168 tỷ đồng.`
+      },
+      "2026-27": {
+        status: "Đang thực hiện",
+        date: "11/6/2026",
+        progress: `Các sở, ngành tiếp tục cập nhật dự án KHCN, ĐMST, CĐS. Sở Xây dựng đã được phê duyệt chủ trương đầu tư dự án IoT ngành xây dựng, giao thông thông minh tại Quyết định số 1746/QĐ-UBND ngày 05/6/2026; đồng thời gửi hồ sơ dự án CSDL ngành Xây dựng xin ý kiến Trung tâm Dữ liệu quốc gia theo Công văn số 8133/UBND-ĐTKT ngày 06/6/2026. Sở NN&MT không được giao chủ đầu tư dự án đầu tư công KHCN, ĐMST, CĐS năm 2026 nhưng có nhiệm vụ vốn sự nghiệp về bản đồ số và truy xuất nguồn gốc.`
+      },
+      "2026-28": {
+        status: "Đang thực hiện",
+        date: "11/6/2026",
+        progress: `Sở Nông nghiệp và Môi trường báo cáo hiện Chính phủ và Bộ Nông nghiệp và Môi trường chưa ban hành cơ sở pháp lý để triển khai cơ chế thử nghiệm có kiểm soát, nên Sở chưa có căn cứ triển khai. Cần tiếp tục theo dõi văn bản hướng dẫn cấp trên.`
+      },
+      "2026-29": {
+        status: "Đang thực hiện",
+        date: "11/6/2026",
+        progress: `Sở Nông nghiệp và Môi trường đã hoàn thành lựa chọn nhà thầu, ký hợp đồng với đơn vị tư vấn để xây dựng Bản đồ số nông sản, sản phẩm OCOP, du lịch thôn buôn. Hiện đang phối hợp xây dựng bản đồ số, dự kiến hoàn thành trong tháng 8/2026; Sở kiến nghị điều chỉnh thời hạn từ quý II/2026 sang quý III/2026.`
+      },
+      "2026-30": {
+        status: "Hoàn thành",
+        date: "11/6/2026",
+        progress: `Sở Nông nghiệp và Môi trường đã hoàn thành, trình UBND tỉnh ban hành Kế hoạch số 126/KH-UBND ngày 20/4/2026 về triển khai truy xuất nguồn gốc nông, lâm, thủy sản trên địa bàn tỉnh giai đoạn 2026-2030 theo Quyết định số 25/QĐ-BNNMT ngày 07/01/2026.`
+      },
+      "2026-31": {
+        status: "Đang thực hiện",
+        date: "11/6/2026",
+        progress: `Báo cáo Sở NN&MT ghi nhận các TTHC thuộc phạm vi chức năng quản lý của Sở, cả cấp tỉnh và cấp xã, đã xây dựng xong quy trình tiếp nhận, giải quyết TTHC phi địa giới. Tỷ lệ hồ sơ tiếp nhận trực tuyến kỳ 05/6-11/6 đạt 47,7% trên Cổng DVC Bộ NN&MT và 21,3% trên Cổng DVC tỉnh Đắk Lắk.`
+      },
+      "2026-39": {
+        status: "Đang thực hiện",
+        date: "11/6/2026",
+        progress: `Sở Giáo dục và Đào tạo báo cáo đã lập kế hoạch bài toán lớn về KHCN, ĐMST và CĐS của ngành, đồng thời tiếp tục triển khai các nhiệm vụ theo Kế hoạch 05-KH/TGV và kịch bản nhiệm vụ theo tháng của Sở.`
+      },
+      "2026-44": {
+        status: "Đang thực hiện",
+        date: "11/6/2026",
+        progress: `Sở Giáo dục và Đào tạo đã giao kinh phí tổ chức 19 lớp đào tạo nghề cho lao động nông thôn với khoảng 565 người. Sáu tháng đầu năm 2026, các cơ sở giáo dục nghề nghiệp tuyển sinh đào tạo 12.266 người, đạt 22,2% kế hoạch năm; cao điểm tuyển sinh dự kiến từ tháng 8 đến hết quý III.`
+      },
+      "2026-47": {
+        status: "Đang thực hiện",
+        date: "11/6/2026",
+        progress: `Sở Giáo dục và Đào tạo đã tham mưu UBND tỉnh chuẩn bị Hội nghị làm việc với các sở, ngành, cơ sở giáo dục đại học, giáo dục nghề nghiệp và doanh nghiệp về đào tạo, phát triển nguồn nhân lực phục vụ mục tiêu tăng trưởng kinh tế hai con số; Trường Cao đẳng Y tế Đắk Lắk phối hợp Trung tâm Dịch vụ Việc làm tổ chức Ngày hội việc làm với hơn 20 doanh nghiệp tham gia.`
+      },
+      "2030-13": {
+        status: "Đang thực hiện",
+        date: "11/6/2026",
+        progress: `Sở Xây dựng đã hoàn thiện Báo cáo đề xuất chủ trương đầu tư dự án IoT ngành xây dựng, giao thông thông minh tại Báo cáo số 260/BC-SXD. UBND tỉnh đã phê duyệt chủ trương đầu tư tại Quyết định số 1746/QĐ-UBND ngày 05/6/2026; Sở đang chuẩn bị báo cáo khảo sát, báo cáo nghiên cứu khả thi và kế hoạch giải ngân vốn.`
+      },
+      "2030-14": {
+        status: "Đang thực hiện",
+        date: "11/6/2026",
+        progress: `Sở Xây dựng báo cáo đã bước đầu ứng dụng, sử dụng trí tuệ nhân tạo và ChatGPT cho cán bộ, công chức, viên chức trong giải quyết công việc hành chính và phục vụ người dân, doanh nghiệp; nội dung này gắn với đào tạo, tập huấn chuyển đổi số, BIM/GIS/AI của ngành.`
+      },
+      "2026-01": {
+        status: "Hoàn thành",
+        date: "11/6/2026",
+        progress: `UBND tỉnh đã ban hành Kế hoạch số 242/KH-UBND ngày 11/6/2026 triển khai các nhiệm vụ, giải pháp cải thiện môi trường đầu tư kinh doanh, nâng cao Chỉ số PCI tỉnh Đắk Lắk năm 2026. Mục tiêu: đưa PCI vào nhóm 15 địa phương dẫn đầu cả nước; điểm số tăng tối thiểu 2,5-3,0 điểm, thứ hạng tăng 8-10 bậc so với PCI năm 2025; giao Sở Tài chính chủ trì theo dõi, tổng hợp, đánh giá, báo cáo trước ngày 15/11/2026.`
+      },
+      "2026-26": {
+        status: "Đang thực hiện",
+        date: "12/6/2026",
+        progress: `Gắn với danh mục dự án theo Thông báo 225/TB-UBND: Sở Khoa học và Công nghệ theo dõi dự án Triển khai nền tảng tổng hợp, phân tích dữ liệu NDAP cấp tỉnh phục vụ chỉ đạo, điều hành dựa trên dữ liệu, tổng vốn 10,28 tỷ đồng, nguồn ngân sách địa phương. Dự án thuộc danh mục Nghị quyết số 55/NQ-HĐND ngày 24/12/2025 và đang tiếp tục theo dõi trong nhóm cơ sở dữ liệu, dữ liệu dùng chung của tỉnh.`
+      },
+      "2026-27": {
+        status: "Đang thực hiện",
+        date: "12/6/2026",
+        progress: `Đối chiếu mục dự án theo Thông báo 225/TB-UBND: danh mục theo dõi gồm 09 dự án tại Phụ lục I-A với tổng vốn 301,35 tỷ đồng và 01 mục ủy thác theo dõi giải ngân 270 tỷ đồng tại Phụ lục I-B. Trong nhóm dự án KHCN, ĐMST, CĐS có các dự án Sở KH&CN theo dõi: trợ lý ảo 18 tỷ đồng, NDAP 10,28 tỷ đồng, họp không giấy tờ 9 tỷ đồng, AI dữ liệu lớn 17 tỷ đồng và mạng WAN tỉnh Đắk Lắk 96,898 tỷ đồng vốn ngân sách Trung ương.`
+      },
+      "2026-32": {
+        status: "Đang thực hiện",
+        date: "12/6/2026",
+        progress: `Dự án Xây dựng hệ thống mạng WAN tỉnh Đắk Lắk thuộc nguồn ngân sách Trung ương, tổng vốn 96,898 tỷ đồng; kế hoạch năm 2026 là 0,623 tỷ đồng vốn chuyển tiếp, dự kiến giải ngân hết trong tháng 6/2026. Dự án đang trong giai đoạn chuẩn bị đầu tư; Sở KH&CN đã gửi Sở Tài chính Tờ trình số 121/TTr-SKHCN thẩm định dự án. Sau báo cáo thẩm định sẽ trình UBND tỉnh phê duyệt Báo cáo nghiên cứu khả thi và báo cáo Bộ KH&CN, Bộ Tài chính bổ sung phần kinh phí còn lại 96,098 tỷ đồng năm 2026.`
+      },
+      "2026-35": {
+        status: "Đang thực hiện",
+        date: "12/6/2026",
+        progress: `Gắn với dự án Triển khai hệ thống Họp không giấy tờ do Sở Khoa học và Công nghệ theo dõi, tổng vốn 9 tỷ đồng từ ngân sách địa phương. Theo Thông báo 225/TB-UBND, dự án đang trong giai đoạn lập Báo cáo đề xuất chủ trương đầu tư.`
+      },
+      "2030-14": {
+        status: "Đang thực hiện",
+        date: "12/6/2026",
+        progress: `Gắn với nhóm dự án AI trong danh mục theo dõi: dự án Tổ chức ứng dụng trí tuệ nhân tạo trên dữ liệu lớn trong các ngành, lĩnh vực quan trọng, tổng vốn 17 tỷ đồng từ ngân sách địa phương, hiện đang trong giai đoạn lập Báo cáo đề xuất chủ trương đầu tư. Ngoài ra, dự án Triển khai Hệ thống trợ lý ảo hỗ trợ cán bộ, công chức, viên chức có tổng vốn 18 tỷ đồng, thuộc danh mục Nghị quyết số 55/NQ-HĐND ngày 24/12/2025.`
+      },
+      "2026-03": {
+        status: "Hoàn thành",
+        date: "12/6/2026",
+        progress: `Báo cáo tuần 05/6-12/6 xác định nhiệm vụ xây dựng đề án, kế hoạch, giải pháp đẩy mạnh, nâng cao hiệu quả cải cách hành chính và các chỉ số liên quan giai đoạn 2026-2030 đã hoàn thành.`
+      },
+      "2026-24": {
+        status: "Đang thực hiện",
+        date: "12/6/2026",
+        progress: `Ngày 11/5/2026, Sở KH&CN ban hành Công văn số 1824/SKHCN-CĐS về cung cấp thông tin và phối hợp khảo sát xây dựng Khung Kiến trúc dữ liệu, Khung quản trị, quản lý dữ liệu tỉnh. Nhiệm vụ xin gia hạn hoàn thành trước ngày 20/7/2026 theo Báo cáo số 159/BC-SKHCN ngày 13/5/2026.`
+      },
+      "2026-25": {
+        status: "Hoàn thành",
+        date: "12/6/2026",
+        progress: `Báo cáo tuần 05/6-12/6 xác định Sở KH&CN đã tham mưu Kế hoạch cụ thể để triển khai thực hiện các bài toán lớn về khoa học, công nghệ, đổi mới sáng tạo và chuyển đổi số của tỉnh Đắk Lắk.`
+      },
+      "2026-45a": {
+        status: "Đang thực hiện",
+        date: "12/6/2026",
+        progress: `Nội dung thực hiện theo Nghị định số 171/2025/NĐ-CP ngày 30/6/2025 và Thông tư số 03/2026/TT-BNV ngày 26/3/2026; UBND tỉnh đã triển khai tại Công văn số 0839/UBND-NV ngày 16/7/2025 và Công văn số 4145/UBND-NV ngày 30/3/2026. Đến kỳ báo cáo 12/6/2026, chưa nhận được nội dung tham mưu của Sở Nội vụ đối với các nhiệm vụ được giao cho UBND cấp tỉnh.`
+      }
+    };
+
+    const currentWeekUpdates = {
+      "2026-18": {
+        status: "Hoàn thành",
+        progress: `Báo cáo tuần 12/6-19/6 xác định nhiệm vụ cắt giảm 50% thời gian giải quyết và 50% chi phí tuân thủ TTHC đã hoàn thành. Tỉnh đã triển khai 321 TTHC được phân cấp; Quyết định số 1448/QĐ-UBND ngày 19/5/2026 phê duyệt phương án cắt giảm, đơn giản hóa TTHC năm 2026.`
+      },
+      "2026-24": {
+        status: "Đang thực hiện",
+        progress: `Sở Khoa học và Công nghệ tiếp tục xây dựng Kiến trúc dữ liệu tỉnh; nhiệm vụ được gia hạn hoàn thành trước ngày 20/7/2026 theo Báo cáo số 159/BC-SKHCN ngày 13/5/2026.`
+      },
+      "2026-26": {
+        status: "Hoàn thành",
+        progress: `Báo cáo tuần 12/6-19/6 xác định Sở Khoa học và Công nghệ đã hoàn thành tham mưu Kế hoạch triển khai xây dựng các cơ sở dữ liệu chuyên ngành và cơ sở dữ liệu chung toàn tỉnh.`
+      },
+      "2026-27": {
+        status: "Hoàn thành",
+        progress: `Báo cáo tuần 12/6-19/6 xác định nhiệm vụ triển khai các dự án KHCN, ĐMST, CĐS năm 2026 đã hoàn thành ở bước tổ chức triển khai. Bốn dự án được phê duyệt chủ trương ngày 17/6/2026 tại các Quyết định số 1893, 1894, 1895 và 1896/QĐ-UBND.`
+      },
+      "2026-43": {
+        status: "Hoàn thành",
+        progress: `Báo cáo tuần 12/6-19/6 xác định nhiệm vụ rà soát, đánh giá nhu cầu đào tạo, bồi dưỡng nguồn nhân lực chất lượng cao đã hoàn thành.`
+      },
+      "2026-45a": {
+        status: "Đang thực hiện",
+        progress: `Sở Nội vụ tiếp tục theo dõi, đánh giá hiệu quả chính sách đào tạo, bồi dưỡng theo định kỳ 6 tháng và hằng năm. Từ ngày 12/6 đến 19/6/2026 đã tiếp nhận vào làm công chức 14 trường hợp, trong đó 02 trường hợp là công chức lãnh đạo, quản lý.`
+      },
+      "2026-34": {
+        status: "Đang thực hiện",
+        progress: `UBND tỉnh đã phê duyệt chủ trương đầu tư dự án Cổng thông tin dữ liệu mở tại Quyết định số 1893/QĐ-UBND ngày 17/6/2026; chuyển sang theo dõi triển khai thực hiện.`
+      },
+      "2026-35": {
+        status: "Đang thực hiện",
+        progress: `UBND tỉnh đã phê duyệt chủ trương đầu tư dự án Họp không giấy tờ tại Quyết định số 1895/QĐ-UBND ngày 17/6/2026; chuyển sang theo dõi triển khai thực hiện.`
+      },
+      "2026-32": {
+        status: "Đang thực hiện",
+        progress: `Dự án mạng WAN thuộc nhóm đề nghị ngân sách Trung ương hỗ trợ, tổng mức 96,099 tỷ đồng; tiếp tục theo dõi hồ sơ dự án và nguồn vốn.`
+      }
+    };
+
+    const latestUpdates = [
+      u("19/6/2026", "Cắt giảm và luồng xanh TTHC", "Tỉnh đã triển khai 321 TTHC được phân cấp; rà soát 349 TTHC trọng tâm và đề xuất đơn giản hóa 14 TTHC. Cơ chế luồng xanh đầu tư được thí điểm từ ngày 12/6/2026 đến hết năm, rút ngắn 50% thời gian một số thủ tục đầu tư.", ["TTHC", "CCHC"], "Cải cách hành chính"),
+      u("19/6/2026", "Tiếp nhận và giải quyết hồ sơ", "Lũy kế đến 14/6/2026 đã tiếp nhận 663.928 hồ sơ, trong đó 530.167 hồ sơ trực tuyến; đã giải quyết 625.763 hồ sơ, đúng và trước hạn 97,93%; còn 38.163 hồ sơ đang giải quyết.", ["Một cửa", "DVC"], "Cải cách hành chính"),
+      u("19/6/2026", "Dịch vụ công trực tuyến", "Cấp tỉnh có 1.609 TTHC, cấp xã có 430 TTHC; đã cung cấp 1.556 dịch vụ công trực tuyến toàn trình, đạt 83,03% theo số liệu ngày 18/6/2026.", ["DVC trực tuyến"], "Cải cách hành chính"),
+      u("19/6/2026", "Xử lý văn bản chịu tác động", "Đến 17/6/2026 đã xử lý 159/365 văn bản chịu tác động của chính quyền địa phương hai cấp và sắp xếp tổ chức bộ máy; còn 206 văn bản chưa xử lý.", ["QPPL", "Thể chế"], "Thể chế"),
+      u("19/6/2026", "Cơ cấu văn bản còn phải xử lý", "Trong 206 văn bản chưa xử lý có 136 văn bản của Đắk Lắk cũ và 70 văn bản của Phú Yên trước đây; gồm 71 nghị quyết và 135 quyết định.", ["Rà soát", "Đôn đốc"], "Thể chế"),
+      u("19/6/2026", "Bốn dự án được phê duyệt chủ trương", "Ngày 17/6/2026, UBND tỉnh phê duyệt chủ trương đầu tư Cổng dữ liệu mở tại Quyết định 1893/QĐ-UBND; Trợ lý ảo tại Quyết định 1894/QĐ-UBND; Họp không giấy tại Quyết định 1895/QĐ-UBND; GeoAI tại Quyết định 1896/QĐ-UBND.", ["Dự án", "Phê duyệt"], "KHCN, ĐMST, CĐS"),
+      u("19/6/2026", "Điều chỉnh danh mục dự án", "Loại khỏi mục Dự án khác 02 dự án Sở KH&CN đề nghị không triển khai tại Công văn số 2234/SKHCN-KHTC ngày 28/5/2026: thiết bị công nghệ sinh học và nền tảng NDAP cấp tỉnh.", ["Dự án", "Rà soát"], "KHCN, ĐMST, CĐS"),
+      u("19/6/2026", "Giải ngân vốn đầu tư KHCN, ĐMST, CĐS", "Đến 15/6/2026, kế hoạch vốn đầu tư là 330 tỷ đồng; đã phân bổ 96,6 tỷ đồng và giải ngân 11,086 tỷ đồng, đạt 11,48% vốn phân bổ, tăng 0,666 tỷ đồng so với số 10,420 tỷ đồng tại mốc 10/6/2026.", ["Giải ngân", "So sánh tuần"], "KHCN, ĐMST, CĐS"),
+      u("19/6/2026", "Hạ tầng số và phủ sóng", "100% thôn đã kết nối cáp quang; 4G phủ 100% dân cư, 5G phủ 96% dân số. 100% đơn vị có Internet, mạng số liệu chuyên dùng và mạng nội bộ phục vụ hệ thống dùng chung.", ["Hạ tầng số"], "KHCN, ĐMST, CĐS"),
+      u("19/6/2026", "Theo dõi chính sách đào tạo, bồi dưỡng", "Nhiệm vụ tiếp tục thực hiện định kỳ. Từ ngày 12/6 đến 19/6/2026, Sở Nội vụ tiếp nhận vào làm công chức 14 trường hợp, trong đó 02 trường hợp là công chức lãnh đạo, quản lý.", ["Sở Nội vụ", "Tiến độ"], "Nguồn nhân lực"),
+      u("19/6/2026", "Chính sách thu hút nhân lực chất lượng cao", "Sở Nội vụ đã có Tờ trình số 608/TTr-SNV ngày 09/6/2026 trình Nghị quyết của HĐND tỉnh quy định chính sách thu hút nguồn nhân lực chất lượng cao của tỉnh Đắk Lắk.", ["Chính sách", "Nhân lực"], "Nguồn nhân lực"),
+      u("19/6/2026", "Đào tạo nghề và công tác giáo dục", "Sở GD&ĐT đề nghị Bộ GD&ĐT hướng dẫn chính sách hỗ trợ đào tạo nghề cho thanh niên hoàn thành nghĩa vụ; các cơ sở giáo dục nghề nghiệp tiếp tục tuyển sinh, đồng thời tập trung tổ chức kỳ thi tốt nghiệp THPT năm 2026 và tuyển sinh lớp 10.", ["Đào tạo", "GDĐT"], "Nguồn nhân lực")
+    ];
+
+    function u(date, title, text, tags, group) {
+      return { date, title, text, tags, group };
+    }
+
+    const weeklyCategorySummary = {
+      "Cải cách hành chính": "Các nhiệm vụ CCHC đến tháng 6 đã hoàn thành; tiếp tục theo dõi cơ chế luồng xanh, chất lượng giải quyết hồ sơ và dịch vụ công trực tuyến.",
+      "Thể chế": "Các nhiệm vụ thể chế đến tháng 6 đã hoàn thành; trọng tâm tiếp theo là xử lý 206 văn bản còn chịu tác động của mô hình chính quyền hai cấp.",
+      "KHCN, ĐMST, CĐS": "Hoàn thành thêm các nhiệm vụ tổ chức triển khai cơ sở dữ liệu và dự án; 04 dự án được phê duyệt chủ trương ngày 17/6/2026.",
+      "Nguồn nhân lực": "Các nhiệm vụ đến tháng 6 đã hoàn thành, trừ nhiệm vụ theo dõi, đánh giá chính sách đào tạo, bồi dưỡng đang tiếp tục thực hiện định kỳ."
+    };
+
+    function t(id, period, category, name, leader, agency, output, due, authority) {
+      return { id, period, category, name, leader, agency, output, due, authority };
+    }
+
+    function p(id, name, agency, source, total, plan2026, note, status) {
+      return { id, name, agency, source, total, plan2026, note, status };
+    }
+
+    const statusKey = "tgv_bcd152_status_v1";
+    const saved = JSON.parse(localStorage.getItem(statusKey) || "{}");
+    let activePeriod = "2026";
+    let activeLeader = "";
+    let activeCategory = "";
+    let activeStatus = "";
+    let activeProjectAgency = "";
+    let activeQuarter = "";
+    let activeAgency = "";
+    let activeStatusMode = "";
+    let chartMode = false;
+
+    const categories = ["Cải cách hành chính", "Thể chế", "KHCN, ĐMST, CĐS", "Nguồn nhân lực"];
+    const statusOptions = ["Cần đôn đốc", "Đang thực hiện", "Chưa cập nhật", "Hoàn thành"];
+    const juneReportTaskIds = new Set([
+      "2026-01", "2026-02", "2026-03", "2026-15", "2026-16", "2026-17", "2026-18",
+      "2026-24", "2026-25", "2026-26", "2026-27", "2026-43", "2026-45", "2026-45a",
+      "2026-48", "2026-49", "2026-50"
+    ]);
+    const lockedStatuses = {
+      "2026-01": "Hoàn thành",
+      "2026-02": "Hoàn thành",
+      "2026-03": "Hoàn thành",
+      "2026-15": "Hoàn thành",
+      "2026-16": "Hoàn thành",
+      "2026-17": "Hoàn thành",
+      "2026-18": "Hoàn thành",
+      "2026-25": "Hoàn thành",
+      "2026-26": "Hoàn thành",
+      "2026-27": "Hoàn thành",
+      "2026-43": "Hoàn thành",
+      "2026-45": "Hoàn thành",
+      "2026-48": "Hoàn thành",
+      "2026-49": "Hoàn thành",
+      "2026-50": "Hoàn thành",
+      "2026-24": "Đang thực hiện",
+      "2026-32": "Đang thực hiện",
+      "2026-34": "Đang thực hiện",
+      "2026-35": "Đang thực hiện",
+      "2026-45a": "Đang thực hiện",
+      "2030-14": "Đang thực hiện"
+    };
+
+    function statusOf(id) { return lockedStatuses[id] || currentWeekUpdates[id]?.status || saved[id] || reportUpdates[id]?.status || "Chưa cập nhật"; }
+    function reportOf(id) { return currentWeekUpdates[id]?.progress || reportUpdates[id]?.progress || ""; }
+    function reportDateOf(id) { return currentWeekUpdates[id] ? "19/6/2026" : reportUpdates[id]?.date || "22/5/2026"; }
+    function setStatus(id, val) { saved[id] = val; localStorage.setItem(statusKey, JSON.stringify(saved)); render(); }
+
+    function filtered() {
+      return scopedTasks({ applyStatus: true });
+    }
+
+    function baseFiltered(applyStatus) {
+      return scopedTasks({ applyStatus });
+    }
+
+    function scopedTasks({ period = activePeriod, category = activeCategory, applyStatus = true } = {}) {
+      const q = document.getElementById("search").value.trim().toLowerCase();
+      return tasks.filter(x => {
+        const text = [x.name, x.leader, x.agency, x.output, x.due, x.category, x.authority, reportOf(x.id)].join(" ").toLowerCase();
+        const status = statusOf(x.id);
+        return (!q || text.includes(q)) &&
+          (!period || x.period === period) &&
+          (!activeLeader || x.leader === activeLeader) &&
+          (!category || x.category === category) &&
+          (!activeQuarter || taskMatchesQuarter(x, activeQuarter)) &&
+          (!activeAgency || normalizeAgency(x.agency || x.leader || "Chưa xác định") === activeAgency) &&
+          (!applyStatus || statusMatchesFilter(status));
+      });
+    }
+
+    function statusMatchesFilter(status) {
+      if (activeStatusMode === "remaining") return status !== "Hoàn thành";
+      if (activeStatusMode === "done") return status === "Hoàn thành";
+      if (activeStatusMode === "active") return status === "Đang thực hiện" || status === "Chưa cập nhật";
+      return activeStatus ? status === activeStatus : true;
+    }
+
+    function dashboardScope2026({ category = activeCategory } = {}) {
+      const q = document.getElementById("search").value.trim().toLowerCase();
+      return tasks.filter(x => {
+        const text = [x.name, x.leader, x.agency, x.output, x.due, x.category, x.authority, reportOf(x.id)].join(" ").toLowerCase();
+        return x.period === "2026" &&
+          (!q || text.includes(q)) &&
+          (!activeLeader || x.leader === activeLeader) &&
+          (!category || x.category === category);
+      });
+    }
+
+    function fullYear2026Tasks() {
+      return tasks.filter(x => x.period === "2026");
+    }
+
+    function filterButtonScope({ period = activePeriod, category = "" } = {}) {
+      return tasks.filter(x => (!period || x.period === period) && (!category || x.category === category));
+    }
+
+    function renderFilters() {
+      const leaderSelect = document.getElementById("leaderFilter");
+      leaderSelect.innerHTML = `<option value="">Tất cả lãnh đạo</option>` + leaders.map(l => `<option>${l.key}</option>`).join("");
+      const catSelect = document.getElementById("categoryFilter");
+      catSelect.innerHTML = `<option value="">Tất cả nhóm nhiệm vụ</option>` + categories.map(c => `<option>${c}</option>`).join("");
+      renderPeriodTabs();
+      document.getElementById("categoryChips").innerHTML = categories.map(c => `<button class="chip ${activeCategory === c ? "active" : ""}" data-cat="${c}">${c} (${filterButtonScope({ category: c }).length} nhiệm vụ)</button>`)
+        .concat([`<button class="chip ${!activeCategory ? "active" : ""}" data-cat="">Tất cả nhóm (${filterButtonScope().length} nhiệm vụ)</button>`]).join("");
+      const scope = filterButtonScope();
+      const countStatus = status => scope.filter(x => statusOf(x.id) === status).length;
+      const allStatusCount = scope.length;
+      document.getElementById("statusChips").innerHTML = [
+        `<button class="chip status-chip ${activeStatus === "Cần đôn đốc" ? "active" : ""}" data-status="Cần đôn đốc">Cần đôn đốc (${countStatus("Cần đôn đốc")} nhiệm vụ)</button>`,
+        `<button class="chip status-chip ${activeStatus === "Đang thực hiện" ? "active" : ""}" data-status="Đang thực hiện">Đang thực hiện (${countStatus("Đang thực hiện")} nhiệm vụ)</button>`,
+        `<button class="chip status-chip ${activeStatus === "Chưa cập nhật" ? "active" : ""}" data-status="Chưa cập nhật">Chưa cập nhật (${countStatus("Chưa cập nhật")} nhiệm vụ)</button>`,
+        `<button class="chip status-chip ${!activeStatus ? "active" : ""}" data-status="">Tất cả trạng thái (${allStatusCount} nhiệm vụ)</button>`,
+        `<button class="chip status-chip ${activeStatus === "Hoàn thành" ? "active" : ""}" data-status="Hoàn thành">Hoàn thành (${countStatus("Hoàn thành")} nhiệm vụ)</button>`
+      ].join("");
+    }
+
+    function renderPeriodTabs() {
+      const count = period => filterButtonScope({ period }).length;
+      document.getElementById("periodTabs").innerHTML = [
+        `<button class="tab ${activePeriod === "2026" ? "active" : ""}" data-period="2026">Năm 2026 (${count("2026")} nhiệm vụ)</button>`,
+        `<button class="tab ${activePeriod === "2027-2030" ? "active" : ""}" data-period="2027-2030">2027-2030 (${count("2027-2030")} nhiệm vụ)</button>`,
+        `<button class="tab ${!activePeriod ? "active" : ""}" data-period="">Tất cả (${count("")} nhiệm vụ)</button>`,
+        `<button class="tab project-tab" data-scroll-project="true">Xem dự án liên quan</button>`
+      ].join("");
+    }
+
+    function renderStats(list) {
+      const scope2026 = dashboardScope2026();
+      const done = scope2026.filter(x => statusOf(x.id) === "Hoàn thành").length;
+      const remaining = scope2026.length - done;
+      const cards = [
+        ["Hoàn thành / Tổng 2026", statTaskValue(`${done}/${scope2026.length}`), "done"],
+        ["Còn lại", statTaskValue(remaining), "remaining"]
+      ];
+      document.getElementById("stats").innerHTML = cards.map(([label, value, mode]) => `<div class="stat stat-filter" data-status-mode="${mode}"><strong>${value}</strong><span>${label}</span></div>`).join("");
+    }
+
+    function statTaskValue(value) {
+      return `${value}<em class="unit"> nhiệm vụ</em>`;
+    }
+
+    function clearQuickFilters() {
+      activeQuarter = "";
+      activeAgency = "";
+      activeStatusMode = "";
+    }
+
+    function scrollToTaskPanel() {
+      const taskList = document.getElementById("taskList");
+      taskList.scrollTop = 0;
+      document.getElementById("taskPanel").scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    function applyMetricFilter(target) {
+      activePeriod = "2026";
+      activeLeader = "";
+      activeCategory = "";
+      activeStatus = "";
+      activeQuarter = target.dataset.quarter || "";
+      activeAgency = target.dataset.agency || "";
+      activeStatusMode = target.dataset.statusMode || "";
+      if (target.dataset.status) activeStatus = target.dataset.status;
+      chartMode = false;
+      render();
+      scrollToTaskPanel();
+    }
+
+    function renderLeaders() {
+      document.getElementById("leaders").innerHTML = leaders.map(l => {
+        const leader2026 = tasks.filter(t => t.leader === l.key && t.period === "2026");
+        const done2026 = leader2026.filter(t => statusOf(t.id) === "Hoàn thành").length;
+        const count = tasks.filter(t => t.leader === l.key).length;
+        return `<div class="leader ${activeLeader === l.key ? "active" : ""}" data-leader="${l.key}">
+          <span class="leader-counts"><span>2026: ${done2026}/${leader2026.length} nhiệm vụ hoàn thành</span><em>Tổng giai đoạn: ${count} nhiệm vụ</em></span>
+          <strong>${l.key}</strong>
+          <span>${l.role}</span>
+          <span>${l.focus}</span>
+        </div>`;
+      }).join("");
+    }
+
+    function renderIndicators() {
+      document.getElementById("indicators").innerHTML = `<table><thead><tr><th>Chỉ tiêu</th><th>Mốc</th><th>Đầu mối</th></tr></thead><tbody>` +
+        indicators.map(i => `<tr><td>${i[0]}</td><td>${i[1]}</td><td>${i[2]}</td></tr>`).join("") +
+        `</tbody></table>`;
+    }
+
+    function renderTasks(list) {
+      if (chartMode) {
+        renderCharts(list);
+        return;
+      }
+      if (!list.length) {
+        document.getElementById("taskList").innerHTML = `<p class="note">Không có nhiệm vụ phù hợp bộ lọc hiện tại.</p>`;
+        return;
+      }
+      const displayList = activeStatus ? list : list.slice().sort(compareTaskStatus);
+      document.getElementById("taskList").innerHTML = displayList.map(x => {
+        const s = statusOf(x.id);
+        const progress = reportOf(x.id);
+        const cls = s === "Hoàn thành" ? "green" : s === "Cần đôn đốc" ? "red" : s === "Đang thực hiện" ? "amber" : "gray";
+        return `<article class="task">
+          <div>
+            <h3>${x.name}</h3>
+            <div class="meta">
+              <span class="tag">${x.period}</span>
+              <span class="tag green">${x.category}</span>
+              <span class="tag ${cls}">${s}</span>
+              <span class="tag gray">${x.due}</span>
+            </div>
+            <p class="desc"><b>Người đứng đầu:</b> ${x.leader}. <b>Cơ quan thực hiện/phối hợp:</b> ${x.agency}.</p>
+            <p class="desc"><b>Sản phẩm đầu ra:</b> ${x.output}. <b>Thẩm quyền:</b> ${x.authority}.</p>
+            ${progress ? `<div class="progress-note"><b>Tiến độ đến ngày ${reportDateOf(x.id)}:</b> ${progress}</div>` : ""}
+          </div>
+          <div class="side">
+            <select aria-label="Cập nhật trạng thái" onchange="setStatus('${x.id}', this.value)">
+              ${statusOptions.map(o => `<option ${s === o ? "selected" : ""}>${o}</option>`).join("")}
+            </select>
+          </div>
+        </article>`;
+      }).join("");
+    }
+
+    function compareTaskStatus(a, b) {
+      const order = { "Cần đôn đốc": 0, "Đang thực hiện": 1, "Chưa cập nhật": 2, "Hoàn thành": 3 };
+      return (order[statusOf(a.id)] ?? 9) - (order[statusOf(b.id)] ?? 9) || a.name.localeCompare(b.name, "vi");
+    }
+
+    function renderCharts(list) {
+      const scope = activePeriod ? activePeriod : "Tất cả";
+      const agencyRows = buildAgencyRows(list);
+      const timeRows = buildTimeRows(tasks.filter(x => x.period === "2026"));
+      document.getElementById("taskList").innerHTML = `
+        <div class="chart-grid">
+          <section class="chart-panel">
+            <h3>Bảng tình trạng nhiệm vụ theo sở/ngành (${scope})</h3>
+            ${renderAgencyStatusTable(agencyRows)}
+          </section>
+          <section class="chart-panel">
+            <h3>Biểu đồ số nhiệm vụ phải thực hiện theo quý năm 2026</h3>
+            ${renderQuarterChart(timeRows)}
+          </section>
+        </div>`;
+    }
+
+    function renderQuarterChartPanel() {
+      const timeRows = buildTimeRows(dashboardScope2026());
+      document.getElementById("quarterChartPanel").innerHTML = `
+        <div class="section-title">
+          <div>
+            <h2>Biểu đồ số nhiệm vụ theo quý năm 2026</h2>
+            <p>Quý II cập nhật theo 17 nhiệm vụ có hạn đến tháng 6/2026 trong báo cáo mới nhất.</p>
+          </div>
+        </div>
+        ${renderQuarterChart(timeRows)}
+      `;
+    }
+
+    function renderQuarterChart(timeRows) {
+      const maxTime = Math.max(1, ...timeRows.map(x => x.total));
+      return `<div class="bar-chart">
+        <div class="bar-line header">
+          <span>Quý</span>
+          <span>Khối lượng</span>
+          <span>Tổng</span>
+          <span>Hoàn thành</span>
+          <span>Còn lại</span>
+        </div>
+        ${timeRows.map(r => `<div class="bar-line">
+          <b>${r.label}</b>
+          <div class="bar"><i style="width:${Math.round(r.total / maxTime * 100)}%"></i></div>
+          <span><button class="metric-link" data-quarter="${r.label}">${r.total}</button></span>
+          <span><button class="metric-link" data-quarter="${r.label}" data-status-mode="done">${r.done}</button></span>
+          <span><button class="metric-link" data-quarter="${r.label}" data-status-mode="remaining">${r.total - r.done}</button></span>
+        </div>`).join("")}
+      </div>`;
+    }
+
+    function renderAgencyStatusPanel() {
+      const rows = buildAgencyRows(fullYear2026Tasks());
+      document.getElementById("agencyStatusPanel").innerHTML = `
+        <h2>Bảng tình trạng nhiệm vụ theo sở/ngành 2026</h2>
+        ${renderAgencyStatusTable(rows)}
+      `;
+    }
+
+    function renderAgencyStatusTable(rows) {
+      if (!rows.length) return `<p class="note">Không có nhiệm vụ phù hợp bộ lọc hiện tại.</p>`;
+      const columns = [
+        ["total", "Tổng"],
+        ["done", "Hoàn thành"],
+        ["active", "Đang thực hiện"],
+        ["warning", "Cần đôn đốc"],
+      ].filter(([key]) => key === "total" || rows.some(row => row[key] > 0));
+      return `<table>
+        <thead>
+          <tr>
+            <th>Sở/ngành/cơ quan</th>
+            ${columns.map(([, label]) => `<th>${label}</th>`).join("")}
+          </tr>
+        </thead>
+        <tbody>
+          ${rows.map(row => `<tr>
+            <td>${row.agency}</td>
+            ${columns.map(([key]) => `<td>${renderAgencyMetric(row, key)}</td>`).join("")}
+          </tr>`).join("")}
+        </tbody>
+      </table>`;
+    }
+
+    function renderAgencyMetric(row, key) {
+      if (!row[key]) return "";
+      const statusMode = key === "done" ? "done" : "";
+      const status = key === "warning" ? "Cần đôn đốc" : "";
+      const activeMode = key === "active" ? "active" : statusMode;
+      return `<button class="metric-link" data-agency="${row.agency}" data-status="${status}" data-status-mode="${activeMode}">${row[key]}</button>`;
+    }
+
+    function buildAgencyRows(list) {
+      const map = new Map();
+      for (const task of list) {
+        const agency = normalizeAgency(task.agency || task.leader || "Chưa xác định");
+        if (!map.has(agency)) map.set(agency, { agency, total: 0, done: 0, active: 0, warning: 0 });
+        const row = map.get(agency);
+        row.total += 1;
+        const status = statusOf(task.id);
+        if (status === "Hoàn thành") row.done += 1;
+        else if (status === "Cần đôn đốc") row.warning += 1;
+        else row.active += 1;
+      }
+      return [...map.values()].sort((a, b) => b.total - a.total || a.agency.localeCompare(b.agency, "vi"));
+    }
+
+    function normalizeAgency(agency) {
+      const generalAgency = "Các sở, ban, ngành, địa phương";
+      const text = (agency || "").toLowerCase().replace(/\s+/g, " ").trim();
+      const generalNames = [
+        "các sở, ban, ngành",
+        "các cơ quan, đơn vị của tỉnh",
+        "các sở, ban, ngành, ubnd xã phường"
+      ];
+      return generalNames.includes(text) ? generalAgency : agency;
+    }
+
+    function buildTimeRows(list) {
+      const labels = ["Quý I", "Quý II", "Quý III", "Quý IV"];
+      const rows = labels.map(label => ({ label, total: 0, done: 0 }));
+      const byLabel = new Map(rows.map(r => [r.label, r]));
+      for (const task of list) {
+        const inJuneReport = juneReportTaskIds.has(task.id);
+        const bucket = inJuneReport ? "Quý II" : dueBucket(task.due);
+        if (bucket === "Quý II" && !inJuneReport) continue;
+        byLabel.get(bucket).total += 1;
+        if (statusOf(task.id) === "Hoàn thành") byLabel.get(bucket).done += 1;
+      }
+      return rows;
+    }
+
+    function taskMatchesQuarter(task, quarter) {
+      if (quarter === "Quý II") return juneReportTaskIds.has(task.id);
+      if (juneReportTaskIds.has(task.id)) return false;
+      return dueBucket(task.due) === quarter;
+    }
+
+    function dueBucket(due) {
+      const text = (due || "").toLowerCase();
+      if (text.includes("tháng 01") || text.includes("tháng 1")) return "Quý I";
+      if (text.includes("tháng 02") || text.includes("tháng 2")) return "Quý I";
+      if (text.includes("tháng 03") || text.includes("tháng 3")) return "Quý I";
+      if (text.includes("tháng 04") || text.includes("tháng 4")) return "Quý II";
+      if (text.includes("tháng 05") || text.includes("tháng 5")) return "Quý II";
+      if (text.includes("tháng 06") || text.includes("tháng 6")) return "Quý II";
+      if (text.includes("quý i/") || text.includes("quý 1")) return "Quý I";
+      if (text.includes("quý ii")) return "Quý II";
+      if (text.includes("quý iii")) return "Quý III";
+      if (text.includes("quý iv")) return "Quý IV";
+      return "Quý IV";
+    }
+
+    function renderProgress(list) {
+      const byCat = categories.map(c => {
+        const arr = dashboardScope2026({ category: c });
+        const done = arr.filter(x => statusOf(x.id) === "Hoàn thành").length;
+        const pct = arr.length ? Math.round(done / arr.length * 100) : 0;
+        return [c, done, arr.length, pct];
+      });
+      const rows = byCat.map(([c, done, total, pct]) => `<div class="progress-row"><span>${c}</span><div class="bar"><i style="width:${pct}%"></i></div><b>${done}/${total} nhiệm vụ (${pct}%)</b></div>`).join("");
+      document.getElementById("progressPanel").innerHTML = `<h2>Tiến độ nhiệm vụ theo nhóm 2026</h2>${rows}`;
+    }
+
+    function renderLatestUpdates() {
+      const groups = categories.map(c => ({ title: c, items: latestUpdates.filter(x => latestGroupOf(x) === c) }));
+      document.getElementById("latestUpdates").className = "update-groups";
+      document.getElementById("latestUpdates").innerHTML = groups.map(group => `
+        <section class="update-group">
+          <h3>${group.title.toUpperCase()}</h3>
+          <div class="update-group-list">
+            ${renderCategorySummaryCard(group.title)}
+            ${group.items.map(renderUpdateCard).join("") || `<p class="note">Chưa có cập nhật mới trong 7 ngày gần nhất.</p>`}
+          </div>
+        </section>
+      `).join("");
+    }
+
+    function renderCategorySummaryCard(category) {
+      const list = tasks.filter(x => x.period === "2026" && x.category === category);
+      const done = list.filter(x => statusOf(x.id) === "Hoàn thành").length;
+      const remaining = list.length - done;
+      return `<article class="update-card summary-card">
+        <strong>${weeklyCategorySummary[category]}</strong>
+        <div class="summary-metrics">
+          <span><b>${list.length}<em class="unit">nhiệm vụ</em></b>Tổng nhiệm vụ 2026</span>
+          <span><b>${done}<em class="unit">nhiệm vụ</em></b>Hoàn thành đến nay</span>
+          <span><b>${remaining}<em class="unit">nhiệm vụ</em></b>Còn lại 2026</span>
+        </div>
+      </article>`;
+    }
+
+    function renderUpdateCard(x) {
+      return `<article class="update-card">
+        <div class="meta">
+          ${x.tags.map(tag => `<span class="tag">${tag}</span>`).join("")}
+        </div>
+        <strong>${x.title}</strong>
+        <p>${x.text}</p>
+      </article>`;
+    }
+
+    function latestGroupOf(update) {
+      if (update.group) return update.group;
+      const tags = update.tags.join(" ").toLowerCase();
+      if (tags.includes("thể chế")) return "Thể chế";
+      if (tags.includes("nguồn nhân lực")) return "Nguồn nhân lực";
+      if (tags.includes("cđs") || tags.includes("khcn") || tags.includes("dự án")) return "KHCN, ĐMST, CĐS";
+      return "Cải cách hành chính";
+    }
+
+    function filteredProjects() {
+      const q = document.getElementById("projectSearch").value.trim().toLowerCase();
+      return projects.filter(x => {
+        const text = [x.name, x.agency, x.source, x.total, x.plan2026, x.note, x.status].join(" ").toLowerCase();
+        return (!q || text.includes(q)) && (!activeProjectAgency || x.agency === activeProjectAgency);
+      });
+    }
+
+    function renderProjectFilters() {
+      renderProjectAgencyButtons();
+    }
+
+    function renderProjectAgencyButtons() {
+      const agencies = [...new Set(projects.map(x => x.agency))].sort((a, b) => a.localeCompare(b, "vi"));
+      document.getElementById("projectAgencyButtons").innerHTML =
+        `<button class="agency-button ${!activeProjectAgency ? "active" : ""}" data-agency="">Tất cả dự án</button>` +
+        agencies.map(a => {
+          const count = projects.filter(x => x.agency === a).length;
+          return `<button class="agency-button ${activeProjectAgency === a ? "active" : ""}" data-agency="${a}">${a} (${count})</button>`;
+        }).join("");
+    }
+
+    function renderProjects() {
+      renderProjectAgencyButtons();
+      const list = filteredProjects().sort((a, b) => moneyValue(b.total) - moneyValue(a.total));
+      const normalProjects = list.filter(x => projectStageOf(x).key !== "disbursement");
+      const preparing = normalProjects.filter(x => projectStageOf(x).key === "prepare").length;
+      const approved = normalProjects.filter(projectHasApproval).length;
+      const doing = normalProjects.filter(x => projectStageOf(x).key === "doing").length;
+      const done = normalProjects.filter(x => projectStageOf(x).key === "done").length;
+      const disbursement = list.filter(x => projectStageOf(x).key === "disbursement").length;
+      const stopped = list.filter(x => projectStageOf(x).key === "stopped").length;
+      document.getElementById("projectStats").innerHTML = [
+        ["Tổng dự án", list.length],
+        ["Đang chuẩn bị", preparing],
+        ["Qua bước chủ trương", approved],
+        ["Đang thực hiện", doing],
+        ["Hoàn thành", done],
+        ["Theo dõi giải ngân", disbursement],
+        ["Dừng/không triển khai", stopped]
+      ].map(([label, value]) => `<div class="stat"><strong>${value}</strong><span>${label}</span></div>`).join("");
+
+      renderProjectTimeline(list);
+    }
+
+    function renderProjectTimeline(list) {
+      const steps = [
+        { key: "prepare", title: "Chuẩn bị" },
+        { key: "approved", title: "Chủ trương" },
+        { key: "doing", title: "Thực hiện" },
+        { key: "done", title: "Hoàn thành" }
+      ];
+      const centralProjects = list.filter(x => projectSourceClass(x) === "violet");
+      const disbursementProjects = list.filter(x => projectStageOf(x).key === "disbursement");
+      const otherProjects = list.filter(x => projectSourceClass(x) !== "violet" && projectStageOf(x).key !== "disbursement");
+      const orderedCentral = centralProjects
+        .slice()
+        .sort((a, b) => projectStageRank(b) - projectStageRank(a) || moneyValue(b.total) - moneyValue(a.total));
+      const orderedOther = otherProjects
+        .slice()
+        .sort((a, b) => projectStageRank(b) - projectStageRank(a) || moneyValue(b.total) - moneyValue(a.total));
+      const disbursementHtml = disbursementProjects.length ? `
+        ${disbursementProjects.map(x => renderProjectProgressRow(x, steps)).join("")}
+      ` : "";
+      const projectRows = `${orderedCentral.map(x => renderProjectProgressRow(x, steps)).join("")}${disbursementHtml}${orderedOther.map(x => renderProjectProgressRow(x, steps)).join("")}`;
+      document.getElementById("projectTimeline").innerHTML = `
+        <h3>Tiến độ triển khai dự án</h3>
+        <div class="project-progress-list">
+          ${projectRows || `<p class="note">Không có dự án phù hợp bộ lọc hiện tại.</p>`}
+        </div>
+      `;
+    }
+
+    function renderProjectProgressRow(project, steps) {
+      const stage = projectStageOf(project);
+      if (stage.key === "disbursement") {
+        return `<article class="project-progress-row disbursement">
+          <div class="project-progress-title">
+            <strong>${project.name} <b>(${project.total})</b></strong>
+            <small>${projectSourceNote(project)} <span>${project.agency} · ${project.status} · ${stage.note}</span></small>
+          </div>
+          <div class="project-stage-bar">
+            <div class="stage-cell current">Theo dõi giải ngân</div>
+          </div>
+        </article>`;
+      }
+      if (stage.key === "stopped") {
+        return `<article class="project-progress-row disbursement">
+          <div class="project-progress-title">
+            <strong>${project.name} <b>(${project.total})</b></strong>
+            <small><span class="source-note local">${project.source}</span><span>${project.agency} · ${project.note}</span></small>
+          </div>
+          <div class="project-stage-bar"><div class="stage-cell current">Dừng/không triển khai</div></div>
+        </article>`;
+      }
+      const currentIndex = steps.findIndex(step => step.key === stage.key);
+      return `<article class="project-progress-row ${projectSourceClass(project) === "violet" ? "central" : ""}">
+        <div class="project-progress-title">
+          <strong>${project.name} <b>(${project.total})</b></strong>
+          <small>${projectSourceNote(project)} <span>${project.agency} · Tiến độ gốc: ${project.status}</span></small>
+        </div>
+        <div class="project-stage-bar">
+          ${steps.map((step, index) => {
+            const cls = index < currentIndex ? "done" : index === currentIndex ? "current" : "pending";
+            return `<div class="stage-cell ${cls}">${step.title}</div>`;
+          }).join("")}
+        </div>
+      </article>`;
+    }
+
+    function projectStageRank(project) {
+      const order = { stopped: -1, prepare: 1, approved: 2, doing: 3, done: 4, disbursement: 0 };
+      return order[projectStageOf(project).key] || 0;
+    }
+
+    function projectSourceClass(project) {
+      const source = project.source.toLowerCase();
+      if (source.includes("trung ương")) return "violet";
+      if (source.includes("giải ngân")) return "orange";
+      return "";
+    }
+
+    function projectSourceNote(project) {
+      const source = project.source.toLowerCase();
+      if (source.includes("trung ương")) return `<span class="source-note central">Ngân sách Trung ương</span>`;
+      if (source.includes("giải ngân")) return `<span class="source-note disbursement">Theo dõi giải ngân</span>`;
+      return `<span class="source-note local">Ngân sách địa phương</span>`;
+    }
+
+    function projectStageOf(project) {
+      const text = project.status.toLowerCase();
+      if (text.includes("dừng") || text.includes("không triển khai")) return { key: "stopped" };
+      if (text.includes("giải ngân")) {
+        return { key: "disbursement", note: "Theo dõi riêng tiến độ giải ngân, sẽ cập nhật số tiền giải ngân sau." };
+      }
+      if (text.includes("hoàn thành")) return { key: "done" };
+      if (text.includes("đang thực hiện") || projectHasApproval(project)) return { key: "doing" };
+      return {
+        key: "prepare",
+        note: "Được xếp vào nhóm Đang chuẩn bị theo tiến độ gốc hiện nay."
+      };
+    }
+
+    function projectHasApproval(project) {
+      const text = `${project.status} ${project.note}`.toLowerCase();
+      return text.includes("phê duyệt chủ trương") || text.includes("thông qua chủ trương");
+    }
+
+    function moneyValue(value) {
+      if (!value || value.includes("Chưa")) return -1;
+      const normalized = value
+        .replace(/\./g, "")
+        .replace(",", ".")
+        .replace(/[^\d.]/g, "");
+      const num = Number(normalized);
+      if (!Number.isFinite(num)) return -1;
+      return value.includes("tỷ") ? num * 1000000000 : num;
+    }
+
+    function renderOtherProjects() {
+      const ordered = otherProjects.slice().sort((a, b) => {
+        const sourceDifference = otherProjectSourceRank(a) - otherProjectSourceRank(b);
+        const stageDifference = otherProjectSortRank(a) - otherProjectSortRank(b);
+        return sourceDifference || stageDifference || moneyValue(b.total) - moneyValue(a.total);
+      });
+      document.getElementById("otherProjectTimeline").innerHTML = `
+        <h3>Tiến độ triển khai dự án khác</h3>
+        <div class="project-progress-list">
+          ${ordered.map(renderOtherProjectProgressRow).join("")}
+        </div>
+      `;
+    }
+
+    function renderOtherProjectProgressRow(project) {
+      const current = otherProjectStageIndex(project);
+      const central = project.source.includes("Trung ương");
+      return `<article class="project-progress-row ${central ? "central" : ""}">
+        <div class="project-progress-title">
+          <strong>${project.name} <b>(${project.total})</b></strong>
+          <small><span class="source-note ${central ? "central" : "local"}">${central ? "Ngân sách Trung ương" : "Ngân sách địa phương/nguồn liên quan"}</span><span>${project.agency} · ${project.status}</span></small>
+          <p class="project-progress-summary">${project.detail} <b>Nguồn:</b> ${project.source}</p>
+        </div>
+        <div class="project-stage-bar">
+          ${["Chuẩn bị", "Chủ trương", "Thực hiện", "Hoàn thành"].map((step, index) => {
+            const cls = index < current ? "done" : index === current ? "current" : "pending";
+            return `<div class="stage-cell ${cls}">${step}</div>`;
+          }).join("")}
+        </div>
+      </article>`;
+    }
+
+    function otherProjectStageIndex(project) {
+      const text = `${project.status} ${project.detail}`.toLowerCase();
+      if (text.includes("hoàn thành")) return 3;
+      if (text.includes("đang thực hiện") || text.includes("chuyển sang theo dõi triển khai")) return 2;
+      if (text.includes("chủ trương") || text.includes("phê duyệt") || text.includes("thông qua")) return 1;
+      return 0;
+    }
+
+    function otherProjectSortRank(project) {
+      const stage = otherProjectStageIndex(project);
+      if (stage === 2) return 0;
+      if (stage === 1) return 1;
+      if (stage === 0) return 2;
+      return 3;
+    }
+
+    function otherProjectSourceRank(project) {
+      return project.source.includes("Trung ương") ? 0 : 1;
+    }
+
+    function renderFinanceSection() {
+      document.getElementById("financeCards").innerHTML = [
+        ["549,220", "tỷ đồng ngân sách địa phương"],
+        ["96,600", "tỷ đồng vốn đầu tư đã phân bổ"],
+        ["11,086", "tỷ đồng vốn đầu tư đã giải ngân"]
+      ].map(([value, label]) => `<div class="finance-card"><strong>${value}</strong><span>${label}</span></div>`).join("");
+      document.getElementById("financeSources").innerHTML = financeSources.map(source => `
+        <section class="finance-source ${source.type}">
+          <div class="finance-source-head">
+            <div><h3>${source.title}</h3><p>${source.note}</p></div>
+            <div class="finance-source-total"><strong>${source.total}</strong><span>${source.totalLabel}</span></div>
+          </div>
+          <div class="disbursement-columns">
+            ${source.columns.map(column => `
+              <div class="disbursement-column">
+                <strong>${column.label}</strong>
+                <div class="column-track"><b>${column.value}</b><i class="column-fill" style="height:${Math.max(0, Math.min(100, column.percent))}%"></i></div>
+                <small>${column.note}</small>
+              </div>
+            `).join("")}
+          </div>
+          <p class="finance-caveat">${source.caveat}</p>
+        </section>
+      `).join("");
+    }
+
+    function render() {
+      const list = filtered();
+      renderFilters();
+      document.getElementById("leaderFilter").value = activeLeader;
+      document.getElementById("categoryFilter").value = activeCategory;
+      renderStats(list);
+      renderQuarterChartPanel();
+      renderLeaders();
+      renderIndicators();
+      renderProgress(list);
+      renderAgencyStatusPanel();
+      renderTasks(list);
+      renderLatestUpdates();
+      renderProjects();
+      renderOtherProjects();
+      renderFinanceSection();
+    }
+
+    document.getElementById("search").addEventListener("input", render);
+    document.getElementById("leaderFilter").addEventListener("change", e => {
+      clearQuickFilters();
+      activeCategory = "";
+      activeStatus = "";
+      activeLeader = e.target.value;
+      render();
+      scrollToTaskPanel();
+    });
+    document.getElementById("categoryFilter").addEventListener("change", e => { clearQuickFilters(); activeLeader = ""; activeStatus = ""; activeCategory = e.target.value; render(); });
+    document.getElementById("projectSearch").addEventListener("input", renderProjects);
+    document.addEventListener("click", e => {
+      const statFilter = e.target.closest(".stat-filter");
+      if (statFilter) { applyMetricFilter(statFilter); return; }
+      if (e.target.matches(".metric-link")) { applyMetricFilter(e.target); return; }
+      if (e.target.matches("[data-scroll-project]")) { document.getElementById("projectTimeline").scrollIntoView({ behavior: "smooth", block: "start" }); return; }
+      if (e.target.matches(".tab")) { clearQuickFilters(); activeLeader = ""; activeCategory = ""; activeStatus = ""; chartMode = false; activePeriod = e.target.dataset.period; render(); }
+      if (e.target.matches(".status-chip")) { clearQuickFilters(); activeLeader = ""; activeCategory = ""; activeStatus = e.target.dataset.status; render(); }
+      else if (e.target.matches(".chip")) { clearQuickFilters(); activeLeader = ""; activeStatus = ""; activeCategory = e.target.dataset.cat; document.getElementById("categoryFilter").value = activeCategory; render(); }
+      if (e.target.matches(".agency-button")) { activeProjectAgency = e.target.dataset.agency; renderProjects(); }
+      const leader = e.target.closest(".leader");
+      if (leader) {
+        clearQuickFilters();
+        activeCategory = "";
+        activeStatus = "";
+        activeLeader = activeLeader === leader.dataset.leader ? "" : leader.dataset.leader;
+        document.getElementById("leaderFilter").value = activeLeader;
+        render();
+        scrollToTaskPanel();
+      }
+    });
+
+    renderFilters();
+    renderProjectFilters();
+    render();
+  </script>
+</body>
+</html>
