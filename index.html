@@ -472,6 +472,11 @@
       background: #fff7ed;
     }
     .project-progress-row.disbursement .project-stage-bar { grid-template-columns: 1fr; }
+    .project-progress-row.proposal {
+      border-color: #facc15;
+      background: #fffbeb;
+      box-shadow: inset 6px 0 0 #eab308;
+    }
     .project-progress-row.central {
       border-color: #8b5cf6;
       background: #ede9fe;
@@ -509,6 +514,7 @@
     .source-note.local { background: #e7f8f0; color: #047857; }
     .source-note.central { background: #6d28d9; color: #fff; }
     .source-note.disbursement { background: #f97316; color: #fff; }
+    .source-note.proposal { background: #facc15; color: #713f12; }
     .project-progress-title b { color: #0f172a; }
     .project-progress-summary {
       margin: 5px 0 0;
@@ -608,6 +614,12 @@
       border-color: #f97316;
       box-shadow: 0 8px 18px rgba(249, 115, 22, .16);
     }
+    .project-progress-row.proposal .stage-cell.current {
+      background: #eab308;
+      border-color: #eab308;
+      color: #713f12;
+      box-shadow: 0 8px 18px rgba(234, 179, 8, .16);
+    }
     .stage-cell.pending { color: #98a2b3; }
     .project-steps {
       display: grid;
@@ -659,6 +671,13 @@
       padding: 12px;
     }
     .disbursement-box h4 { margin: 0 0 8px; font-size: 14px; }
+    .finance-inline {
+      margin: 10px 0 12px;
+      border: 1px solid #dbeafe;
+      border-radius: var(--radius);
+      background: #f8fbff;
+      padding: 12px;
+    }
     .finance-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-bottom: 12px; }
     .finance-card { border: 1px solid var(--line); border-radius: 8px; background: #fff; padding: 12px; }
     .finance-card strong { display: block; font-size: 24px; line-height: 1.05; color: var(--ink); }
@@ -840,7 +859,7 @@
       text-underline-offset: 2px;
     }
     #projectStats {
-      grid-template-columns: repeat(7, minmax(96px, 1fr));
+      grid-template-columns: repeat(8, minmax(96px, 1fr));
       gap: 8px;
       overflow-x: auto;
       padding-bottom: 4px;
@@ -946,7 +965,7 @@
         font-size: 8px;
       }
       .project-progress-row.disbursement .project-stage-bar { grid-template-columns: 1fr; }
-      #projectStats { grid-template-columns: repeat(6, minmax(92px, 1fr)); }
+      #projectStats { grid-template-columns: repeat(4, minmax(92px, 1fr)); }
       .bar-line {
         grid-template-columns: 44px 1fr 50px 56px 50px;
         gap: 6px;
@@ -1040,6 +1059,16 @@
         <input id="projectSearch" placeholder="Tìm dự án, cơ quan, ghi chú, nguồn vốn...">
       </div>
       <div id="projectSummary" class="project-summary-card"></div>
+      <section id="financePanel" class="finance-inline">
+        <div class="section-title">
+          <div>
+            <h2>Kinh phí KHCN, ĐMST, CĐS năm 2026</h2>
+            <p>Nguồn cập nhật: Báo cáo tuần từ ngày 10/7/2026 đến ngày 17/7/2026; dữ liệu Tapmis đến ngày 12/7/2026.</p>
+          </div>
+        </div>
+        <div id="financeCards" class="finance-grid"></div>
+        <div id="financeSources" class="finance-sources"></div>
+      </section>
       <div id="projectAgencyButtons" class="agency-buttons"></div>
       <div class="stats" id="projectStats"></div>
       <div id="projectTimeline" class="project-progress"></div>
@@ -1055,15 +1084,14 @@
       <div id="otherProjectTimeline" class="project-progress"></div>
     </section>
 
-    <section class="panel" id="financePanel">
+    <section class="panel" id="proposalProjectPanel">
       <div class="section-title">
         <div>
-          <h2>Kinh phí KHCN, ĐMST, CĐS năm 2026</h2>
-          <p>Nguồn cập nhật: Báo cáo tuần từ ngày 10/7/2026 đến ngày 17/7/2026; dữ liệu Tapmis đến ngày 12/7/2026.</p>
+          <h2>Dự án đang đề xuất</h2>
+          <p>Các dự án mới theo Công văn số 3337/SKHCN-KHTC ngày 15/7/2026, đang ở bước đề xuất, chưa ghi nhận văn bản phê duyệt chủ trương hoặc giao vốn.</p>
         </div>
       </div>
-      <div id="financeCards" class="finance-grid"></div>
-      <div id="financeSources" class="finance-sources"></div>
+      <div id="proposalProjectTimeline" class="project-progress"></div>
     </section>
   </main>
 
@@ -1267,42 +1295,42 @@
       },
       {
         name: "Giải pháp phòng học ngoại ngữ, phòng học STEM/STEAM đồng bộ với thiết bị tối thiểu",
-        agency: "Ngành Giáo dục và Đào tạo", total: "Thuộc gói đề xuất 200,007 tỷ đồng", status: "Đang chuẩn bị",
+        agency: "Ngành Giáo dục và Đào tạo", total: "Thuộc gói đề xuất 200,007 tỷ đồng", status: "Đang đề xuất",
         detail: "Đề xuất trong Công văn số 3337/SKHCN-KHTC ngày 15/7/2026; chưa có thông tin phê duyệt chủ trương hoặc giao vốn.", source: "Báo cáo tuần 10/7/2026-17/7/2026."
       },
       {
         name: "Giải pháp phòng Tin học và Giáo dục số cho các cơ sở giáo dục cấp tiểu học",
-        agency: "Ngành Giáo dục và Đào tạo", total: "Thuộc gói đề xuất 200,007 tỷ đồng", status: "Đang chuẩn bị",
+        agency: "Ngành Giáo dục và Đào tạo", total: "Thuộc gói đề xuất 200,007 tỷ đồng", status: "Đang đề xuất",
         detail: "Đề xuất trong Công văn số 3337/SKHCN-KHTC ngày 15/7/2026; chưa có thông tin phê duyệt chủ trương hoặc giao vốn.", source: "Báo cáo tuần 10/7/2026-17/7/2026."
       },
       {
         name: "Góc trải nghiệm số cho trẻ em các trường mầm non",
-        agency: "Ngành Giáo dục và Đào tạo", total: "Thuộc gói đề xuất 200,007 tỷ đồng", status: "Đang chuẩn bị",
+        agency: "Ngành Giáo dục và Đào tạo", total: "Thuộc gói đề xuất 200,007 tỷ đồng", status: "Đang đề xuất",
         detail: "Đề xuất trong Công văn số 3337/SKHCN-KHTC ngày 15/7/2026; chưa có thông tin phê duyệt chủ trương hoặc giao vốn.", source: "Báo cáo tuần 10/7/2026-17/7/2026."
       },
       {
         name: "Đầu tư hạ tầng số ngành giáo dục phục vụ Chương trình Giáo dục phổ thông 2018",
-        agency: "Ngành Giáo dục và Đào tạo", total: "Thuộc gói đề xuất 200,007 tỷ đồng", status: "Đang chuẩn bị",
+        agency: "Ngành Giáo dục và Đào tạo", total: "Thuộc gói đề xuất 200,007 tỷ đồng", status: "Đang đề xuất",
         detail: "Đề xuất đầu tư phòng máy tính dạy học; chưa có thông tin phê duyệt chủ trương hoặc giao vốn.", source: "Báo cáo tuần 10/7/2026-17/7/2026."
       },
       {
         name: "Đầu tư, nâng cấp hệ thống mạng LAN bảo đảm an toàn thông tin",
-        agency: "Các cơ quan, đơn vị", total: "Thuộc gói đề xuất 200,007 tỷ đồng", status: "Đang chuẩn bị",
+        agency: "Các cơ quan, đơn vị", total: "Thuộc gói đề xuất 200,007 tỷ đồng", status: "Đang đề xuất",
         detail: "Đề xuất trong Công văn số 3337/SKHCN-KHTC ngày 15/7/2026; chưa có thông tin phê duyệt chủ trương hoặc giao vốn.", source: "Báo cáo tuần 10/7/2026-17/7/2026."
       },
       {
         name: "Ứng dụng AI, IoT, Big Data, GIS và blockchain trong quản lý, sản xuất, chế biến và tiêu thụ nông sản",
-        agency: "Ngành Nông nghiệp và Môi trường", total: "Thuộc gói đề xuất 200,007 tỷ đồng", status: "Đang chuẩn bị",
+        agency: "Ngành Nông nghiệp và Môi trường", total: "Thuộc gói đề xuất 200,007 tỷ đồng", status: "Đang đề xuất",
         detail: "Đề xuất trong Công văn số 3337/SKHCN-KHTC ngày 15/7/2026; chưa có thông tin phê duyệt chủ trương hoặc giao vốn.", source: "Báo cáo tuần 10/7/2026-17/7/2026."
       },
       {
         name: "Chuyển đổi số và AI tích hợp viễn thám giám sát, quản lý, bảo vệ rừng và đa dạng sinh học",
-        agency: "Ngành Nông nghiệp và Môi trường", total: "Thuộc gói đề xuất 200,007 tỷ đồng", status: "Đang chuẩn bị",
+        agency: "Ngành Nông nghiệp và Môi trường", total: "Thuộc gói đề xuất 200,007 tỷ đồng", status: "Đang đề xuất",
         detail: "Đề xuất trong Công văn số 3337/SKHCN-KHTC ngày 15/7/2026; chưa có thông tin phê duyệt chủ trương hoặc giao vốn.", source: "Báo cáo tuần 10/7/2026-17/7/2026."
       },
       {
         name: "Mạng LAN nội bộ phục vụ chuyển đổi số, cải cách hành chính và bảo vệ chủ quyền an ninh biên giới",
-        agency: "Bộ đội Biên phòng tỉnh", total: "Thuộc gói đề xuất 200,007 tỷ đồng", status: "Đang chuẩn bị",
+        agency: "Bộ đội Biên phòng tỉnh", total: "Thuộc gói đề xuất 200,007 tỷ đồng", status: "Đang đề xuất",
         detail: "Đề xuất mua sắm trang bị và đầu tư mạng LAN nội bộ; chưa có thông tin phê duyệt chủ trương hoặc giao vốn.", source: "Báo cáo tuần 10/7/2026-17/7/2026."
       }
     ];
@@ -2210,6 +2238,7 @@
       renderProjectSummary();
       const list = filteredProjects().sort((a, b) => moneyValue(b.total) - moneyValue(a.total));
       const normalProjects = list.filter(x => projectStageOf(x).key !== "disbursement");
+      const proposing = normalProjects.filter(x => projectStageOf(x).key === "proposal").length;
       const preparing = normalProjects.filter(x => projectStageOf(x).key === "prepare").length;
       const approved = normalProjects.filter(x => projectStageOf(x).key === "approved").length;
       const council = normalProjects.filter(x => projectStageOf(x).key === "council").length;
@@ -2218,6 +2247,7 @@
       const stopped = list.filter(x => projectStageOf(x).key === "stopped").length;
       document.getElementById("projectStats").innerHTML = [
         ["Tổng dự án", list.length],
+        ["Đang đề xuất", proposing],
         ["Chuẩn bị", preparing],
         ["Đã có chủ trương", approved],
         ["HĐND đã thông qua", council],
@@ -2234,7 +2264,7 @@
         <h3>Tóm tắt dự án đầu tư khoa học, công nghệ, đổi mới sáng tạo và chuyển đổi số</h3>
         <p>Tính đến báo cáo tuần 10/7/2026-17/7/2026, kế hoạch vốn đầu tư lĩnh vực KHCN, ĐMST, CĐS sau điều chỉnh là 330 tỷ đồng; đã phân bổ 126,460 tỷ đồng và còn 203,540 tỷ đồng. Ngân sách địa phương bố trí cho KHCN, ĐMST, CĐS năm 2026 là 549,220 tỷ đồng, giảm 25 tỷ đồng so với dự toán đầu năm, bằng khoảng 1,56% tổng chi ngân sách địa phương; trong đó chi thường xuyên là 219,220 tỷ đồng và chi đầu tư là 330 tỷ đồng. Sau tiết kiệm 10% để cải cách tiền lương, chi thường xuyên được sử dụng là 204,455 tỷ đồng. Theo Tapmis ngày 12/7/2026, tổng giải ngân đạt 54,813 tỷ đồng, tương ứng 10,4% dự toán được giao sử dụng; chi thường xuyên giải ngân 34,622 tỷ đồng, đạt 17%, còn 169,833 tỷ đồng chưa giải ngân; chi đầu tư giải ngân 20,191 tỷ đồng, đạt 17,4% vốn đã phân bổ và 6,12% kế hoạch vốn được giao.</p>
         <p>Về dự án đầu tư, nhóm chuyển tiếp gồm dự án ứng dụng công nghệ cao quản lý, giám sát tài nguyên rừng và dự án hạ tầng Khu nông nghiệp ứng dụng công nghệ cao Phú Yên; riêng dự án Phú Yên đã nghiệm thu, đưa vào sử dụng, đang thanh toán và quyết toán. Nhóm đã được HĐND, UBND thông qua, phê duyệt chủ trương gồm số hóa tài liệu cơ quan Đảng, nền tảng dữ liệu số Công an tỉnh, Trợ lý ảo, Họp không giấy, GeoAI, Cổng dữ liệu mở, IoT ngành xây dựng - giao thông thông minh và số hóa tài liệu lưu trữ Sở Tư pháp. Nhóm còn tiếp tục hoàn thiện chủ trương gồm CSDL ngành Xây dựng và Tòa soạn hội tụ. Các dự án dùng nguồn Trung ương như mạng WAN, Bệnh án điện tử và thông tin cơ sở được tách màu riêng để theo dõi nguồn vốn, thẩm định và tiến độ bố trí vốn.</p>
-        <p>Đối với phần vốn còn lại 203,540 tỷ đồng, Công văn số 3337/SKHCN-KHTC ngày 15/7/2026 đề xuất 08 dự án với vốn dự kiến bố trí năm 2026 là 200,007 tỷ đồng: phòng học ngoại ngữ và STEM/STEAM; phòng Tin học và Giáo dục số tiểu học; góc trải nghiệm số mầm non; hạ tầng số ngành giáo dục; nâng cấp mạng LAN và an toàn thông tin; ứng dụng AI, IoT, Big Data, GIS và blockchain trong nông nghiệp; AI kết hợp viễn thám giám sát rừng, đa dạng sinh học; và mạng LAN phục vụ chuyển đổi số, cải cách hành chính, bảo vệ biên giới. Các đề xuất này vẫn được xếp ở bước Chuẩn bị vì báo cáo mới chỉ nêu đề nghị bố trí vốn, chưa ghi rõ phê duyệt chủ trương hoặc quyết định giao vốn.</p>
+        <p>Đối với phần vốn còn lại 203,540 tỷ đồng, Công văn số 3337/SKHCN-KHTC ngày 15/7/2026 đề xuất 08 dự án với vốn dự kiến bố trí năm 2026 là 200,007 tỷ đồng: phòng học ngoại ngữ và STEM/STEAM; phòng Tin học và Giáo dục số tiểu học; góc trải nghiệm số mầm non; hạ tầng số ngành giáo dục; nâng cấp mạng LAN và an toàn thông tin; ứng dụng AI, IoT, Big Data, GIS và blockchain trong nông nghiệp; AI kết hợp viễn thám giám sát rừng, đa dạng sinh học; và mạng LAN phục vụ chuyển đổi số, cải cách hành chính, bảo vệ biên giới. Các nội dung này được tách thành nhóm Đang đề xuất vì báo cáo mới chỉ nêu đề nghị bố trí vốn, chưa ghi rõ phê duyệt chủ trương hoặc quyết định giao vốn.</p>
         <p>Trọng tâm theo dõi là chuyển các dự án đã có chủ trương sang lập, thẩm định, phê duyệt hồ sơ thiết kế - dự toán hoặc báo cáo kinh tế - kỹ thuật, đồng thời gắn trách nhiệm giải ngân với từng chủ đầu tư. Chỉ chuyển dự án sang “Đã có chủ trương” khi có văn bản phê duyệt hoặc thông qua chủ trương; chỉ chuyển sang “Đã giao vốn” khi có quyết định giao, phân bổ, bố trí vốn hoặc phát sinh giải ngân thực tế. Phần vốn chưa phân bổ cần được bám sát từng dự án để tránh dồn giải ngân cuối năm. Dự án nguồn Trung ương phải theo dõi đồng thời hồ sơ kỹ thuật và kết quả bố trí vốn; dự án địa phương cần cập nhật thẩm định, quyết định đầu tư, đấu thầu, khối lượng và thanh toán Kho bạc.</p>
       `;
     }
@@ -2269,6 +2299,16 @@
 
     function renderProjectProgressRow(project, steps) {
       const stage = projectStageOf(project);
+      if (stage.key === "proposal") {
+        return `<article class="project-progress-row">
+          <div class="project-progress-title">
+            <strong>${project.name} <b>(${project.total})</b></strong>
+            <small>${projectSourceNote(project)} <span>${project.agency} · ${project.status} · ${stage.note}</span></small>
+            ${renderProjectDetails(project)}
+          </div>
+          <div class="project-stage-bar"><div class="stage-cell current">Đang đề xuất</div></div>
+        </article>`;
+      }
       if (stage.key === "disbursement") {
         return `<article class="project-progress-row disbursement">
           <div class="project-progress-title">
@@ -2317,7 +2357,7 @@
     }
 
     function projectStageRank(project) {
-      const order = { stopped: -1, prepare: 1, approved: 2, council: 3, funded: 4, disbursement: 0 };
+      const order = { stopped: -1, proposal: 0.5, prepare: 1, approved: 2, council: 3, funded: 4, disbursement: 0 };
       return order[projectStageOf(project).key] || 0;
     }
 
@@ -2341,6 +2381,9 @@
       if (`${project.status || ""} ${project.source || ""}`.toLowerCase().includes("theo dõi giải ngân")) {
         return { key: "disbursement", note: "Theo dõi riêng tiến độ giải ngân, sẽ cập nhật số tiền giải ngân sau." };
       }
+      if (projectIsProposalOnly(project)) {
+        return { key: "proposal", note: "Dự án đang đề xuất theo Công văn 3337/SKHCN-KHTC; chưa có chủ trương, chưa giao vốn." };
+      }
       if (projectHasFunding(project)) return { key: "funded" };
       if (projectHasCouncilApproval(project)) return { key: "council" };
       if (projectHasApproval(project)) return { key: "approved" };
@@ -2356,7 +2399,8 @@
 
     function projectHasApproval(project) {
       const text = projectText(project);
-      if (text.includes("đang trình") ||
+      if (projectIsProposalOnly(project) ||
+          text.includes("đang trình") ||
           text.includes("đã trình") ||
           text.includes("đang xin ý kiến") ||
           text.includes("xin ý kiến") ||
@@ -2380,11 +2424,30 @@
 
     function projectHasCouncilApproval(project) {
       const text = projectText(project);
+      if (projectIsProposalOnly(project)) return false;
       return text.includes("hđnd") && (text.includes("thông qua") || text.includes("nghị quyết") || text.includes("danh mục, mức vốn"));
     }
 
     function projectHasFunding(project) {
       const text = projectText(project);
+      if (projectIsProposalOnly(project)) return false;
+      if (text.includes("dự kiến bố trí") ||
+          text.includes("đề nghị bố trí") ||
+          text.includes("đề nghị bổ sung") ||
+          text.includes("nhu cầu vốn") ||
+          text.includes("cần bố trí") ||
+          text.includes("chờ nguồn") ||
+          text.includes("chưa có thông tin") ||
+          text.includes("chưa ghi rõ")) {
+        return text.includes("đã giao vốn") ||
+          text.includes("ubnd tỉnh giao vốn") ||
+          text.includes("quyết định giao vốn") ||
+          text.includes("đã phân bổ") ||
+          text.includes("vốn đã bố trí") ||
+          text.includes("lũy kế vốn đã bố trí") ||
+          text.includes("đã giải ngân") ||
+          text.includes("lũy kế giải ngân");
+      }
       return text.includes("giao vốn") ||
         text.includes("quyết định giao vốn") ||
         text.includes("phân bổ vốn") ||
@@ -2394,6 +2457,18 @@
         text.includes("đã giải ngân") ||
         text.includes("giải ngân năm 2026") ||
         text.includes("lũy kế giải ngân");
+    }
+
+    function projectIsProposalOnly(project) {
+      const text = projectText(project);
+      return (text.includes("công văn số 3337/skhcn-khtc") ||
+          text.includes("đề xuất trong công văn") ||
+          text.includes("đề xuất đầu tư") ||
+          text.includes("đề xuất mua sắm")) &&
+        (text.includes("chưa có thông tin phê duyệt chủ trương") ||
+          text.includes("chưa có thông tin phê duyệt") ||
+          text.includes("chưa có thông tin") ||
+          text.includes("chưa ghi rõ phê duyệt"));
     }
 
     function moneyValue(value) {
@@ -2408,7 +2483,7 @@
     }
 
     function renderOtherProjects() {
-      const ordered = otherProjects.slice().sort((a, b) => {
+      const ordered = otherProjects.filter(project => !projectIsProposalOnly(project)).sort((a, b) => {
         const sourceDifference = otherProjectSourceRank(a) - otherProjectSourceRank(b);
         const stageDifference = otherProjectSortRank(a) - otherProjectSortRank(b);
         return sourceDifference || stageDifference || moneyValue(b.total) - moneyValue(a.total);
@@ -2416,7 +2491,19 @@
       document.getElementById("otherProjectTimeline").innerHTML = `
         <h3>Tiến độ triển khai dự án khác</h3>
         <div class="project-progress-list">
-          ${ordered.map(renderOtherProjectProgressRow).join("")}
+          ${ordered.length ? ordered.map(renderOtherProjectProgressRow).join("") : `<p class="note">Không có dự án phù hợp.</p>`}
+        </div>
+      `;
+    }
+
+    function renderProposalProjects() {
+      const proposals = otherProjects
+        .filter(projectIsProposalOnly)
+        .sort((a, b) => moneyValue(b.total) - moneyValue(a.total) || a.name.localeCompare(b.name, "vi"));
+      document.getElementById("proposalProjectTimeline").innerHTML = `
+        <h3>Danh mục dự án đang đề xuất</h3>
+        <div class="project-progress-list">
+          ${proposals.length ? proposals.map(renderOtherProjectProgressRow).join("") : `<p class="note">Chưa có dự án đang đề xuất.</p>`}
         </div>
       `;
     }
@@ -2426,6 +2513,16 @@
       const central = project.source.includes("Trung ương");
       const mixed = central && project.source.includes("địa phương");
       const sourceLabel = mixed ? "Ngân sách Trung ương + địa phương" : central ? "Ngân sách Trung ương" : "Ngân sách địa phương/nguồn liên quan";
+      if (projectIsProposalOnly(project)) {
+        return `<article class="project-progress-row proposal">
+          <div class="project-progress-title">
+            <strong>${project.name} <b>(${project.total})</b></strong>
+            <small><span class="source-note proposal">Dự án đang đề xuất</span><span>${project.agency} · ${project.status}</span></small>
+            ${renderProjectDetails(project)}
+          </div>
+          <div class="project-stage-bar"><div class="stage-cell current">Đang đề xuất</div></div>
+        </article>`;
+      }
       return `<article class="project-progress-row ${central ? "central" : ""}">
         <div class="project-progress-title">
           <strong>${project.name} <b>(${project.total})</b></strong>
@@ -2442,6 +2539,7 @@
     }
 
     function otherProjectStageIndex(project) {
+      if (projectIsProposalOnly(project)) return -1;
       if (projectHasFunding(project)) return 3;
       if (projectHasCouncilApproval(project)) return 2;
       if (projectHasApproval(project)) return 1;
@@ -2453,8 +2551,9 @@
       if (stage === 3) return 0;
       if (stage === 2) return 1;
       if (stage === 1) return 2;
-      if (stage === 0) return 3;
-      return 3;
+      if (stage === -1) return 3;
+      if (stage === 0) return 4;
+      return 4;
     }
 
     function otherProjectSourceRank(project) {
@@ -2503,6 +2602,7 @@
       renderProposalPanel();
       renderProjects();
       renderOtherProjects();
+      renderProposalProjects();
       renderFinanceSection();
     }
 
