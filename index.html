@@ -2308,10 +2308,9 @@
       const projectRows = `${orderedCentral.map(x => renderProjectProgressRow(x, steps)).join("")}${disbursementHtml}${orderedOther.map(x => renderProjectProgressRow(x, steps)).join("")}`;
       document.getElementById("projectTimeline").innerHTML = `
         <div class="project-progress-heading">
-          <h3>Dự án theo Thông báo số 225/TB-UBND ngày 01/6/2026</h3>
-          <p>Nguồn: Thông báo số 225/TB-UBND ngày 01/6/2026 của UBND tỉnh về phân công theo dõi mục tiêu tăng trưởng.</p>
+          <h3>Tiến độ triển khai dự án liên quan TB 225</h3>
+          <p>Dự án theo Thông báo số 225/TB-UBND ngày 01/6/2026. Nguồn: Thông báo số 225/TB-UBND ngày 01/6/2026 của UBND tỉnh về phân công theo dõi mục tiêu tăng trưởng.</p>
         </div>
-        <h3>Tiến độ triển khai dự án liên quan TB 225</h3>
         <div class="project-progress-list">
           ${projectRows || `<p class="note">Không có dự án phù hợp bộ lọc hiện tại.</p>`}
         </div>
