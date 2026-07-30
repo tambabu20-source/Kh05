@@ -759,6 +759,46 @@
     }
     .disbursement-column small { color: var(--muted); font-size: 11px; line-height: 1.35; }
     .finance-caveat { margin: 12px 0 0; padding-top: 10px; border-top: 1px dashed #cbd5e1; color: #475467; font-size: 11px; line-height: 1.4; }
+    .source-footer {
+      margin: 14px 0 0;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 12px;
+      align-items: center;
+      border: 1px solid #bfdbfe;
+      border-left: 5px solid #2563eb;
+      border-radius: var(--radius);
+      background: #eff6ff;
+      padding: 12px 14px;
+    }
+    .source-footer strong {
+      display: block;
+      color: #0f172a;
+      font-size: 14px;
+      line-height: 1.35;
+    }
+    .source-footer span {
+      display: block;
+      margin-top: 3px;
+      color: #667085;
+      font-size: 12px;
+      line-height: 1.4;
+    }
+    .source-footer a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 36px;
+      padding: 7px 12px;
+      border-radius: 6px;
+      background: #1d4ed8;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 800;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+    .source-footer a:hover { background: #1e40af; }
     .extra-projects { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
     .meta { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
     .tag {
@@ -938,6 +978,8 @@
       .project-tools { grid-template-columns: 1fr; }
       .finance-grid, .finance-sources, .extra-projects { grid-template-columns: 1fr; }
       .finance-source { padding: 11px; }
+      .source-footer { grid-template-columns: 1fr; }
+      .source-footer a { width: 100%; }
       .disbursement-columns { min-height: 190px; gap: 6px; }
       .disbursement-column { grid-template-rows: auto 105px auto; }
       .column-track { height: 105px; width: min(48px, 76%); }
@@ -1105,6 +1147,14 @@
         </div>
       </div>
       <div id="proposalProjectTimeline" class="project-progress"></div>
+    </section>
+
+    <section class="source-footer" aria-label="Nguồn dữ liệu gốc">
+      <div>
+        <strong>Nguồn dữ liệu gốc</strong>
+        <span>Báo cáo Tổ giúp việc trên Google Drive/Docs dùng để cập nhật tiến độ dashboard.</span>
+      </div>
+      <a href="https://docs.google.com/document/d/1Q7SJiq3rz-dZgPXAw5OS9KzNgBD_QtKS/edit" target="_blank" rel="noopener">Mở nguồn Google Drive</a>
     </section>
   </main>
 
