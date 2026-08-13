@@ -534,6 +534,8 @@
     .source-note.central { background: #6d28d9; color: #fff; }
     .source-note.disbursement { background: #f97316; color: #fff; }
     .source-note.proposal { background: #facc15; color: #713f12; }
+    .source-note.public-investment { background: #dbeafe; color: #1d4ed8; }
+    .source-note.recurrent { background: #fef3c7; color: #92400e; }
     .project-progress-title b { color: #0f172a; }
     .project-progress-summary {
       margin: 5px 0 0;
@@ -2447,7 +2449,7 @@
         return `<article class="project-progress-row disbursement">
           <div class="project-progress-title">
             <strong>${project.name} <b>(${project.total})</b></strong>
-            <small><span class="source-note local">${project.source}</span><span>${project.agency} · ${project.note}</span></small>
+            <small>${projectSourceNote(project)} <span>${project.agency} · ${project.note}</span></small>
             ${renderProjectDetails(project)}
           </div>
           <div class="project-stage-bar"><div class="stage-cell current">Dừng/không triển khai</div></div>
@@ -2492,9 +2494,20 @@
 
     function projectSourceNote(project) {
       const source = project.source.toLowerCase();
-      if (source.includes("trung ương")) return `<span class="source-note central">Ngân sách Trung ương</span>`;
+      const spendingNote = localSpendingTypeNote(project);
+      if (source.includes("trung ương")) return `<span class="source-note central">Ngân sách Trung ương</span>${spendingNote}`;
       if (source.includes("giải ngân")) return `<span class="source-note disbursement">Theo dõi giải ngân</span>`;
-      return `<span class="source-note local">Ngân sách địa phương</span>`;
+      return `<span class="source-note local">Ngân sách địa phương</span>${spendingNote}`;
+    }
+
+    function localSpendingTypeNote(project, forceLocal = false) {
+      const source = `${project.source || ""}`.toLowerCase();
+      if (!forceLocal && !source.includes("địa phương")) return "";
+      const text = projectText(project);
+      if (text.includes("chi thường xuyên") || text.includes("chuyển nguồn chi thường xuyên")) {
+        return `<span class="source-note recurrent">Chi thường xuyên</span>`;
+      }
+      return `<span class="source-note public-investment">Đầu tư công</span>`;
     }
 
     function projectStageOf(project) {
@@ -2664,7 +2677,8 @@
       const current = otherProjectStageIndex(project);
       const central = project.source.includes("Trung ương");
       const mixed = central && project.source.includes("địa phương");
-      const sourceLabel = mixed ? "Ngân sách Trung ương + địa phương" : central ? "Ngân sách Trung ương" : "Ngân sách địa phương/nguồn liên quan";
+      const sourceClass = central ? "central" : "local";
+      const sourceLabel = mixed ? "Ngân sách Trung ương + địa phương" : central ? "Ngân sách Trung ương" : "Ngân sách địa phương";
       if (projectIsProposalOnly(project)) {
         return `<article class="project-progress-row proposal">
           <div class="project-progress-title">
@@ -2678,7 +2692,7 @@
       return `<article class="project-progress-row ${central ? "central" : ""}">
         <div class="project-progress-title">
           <strong>${project.name} <b>(${project.total})</b></strong>
-          <small><span class="source-note ${central ? "central" : "local"}">${sourceLabel}</span><span>${project.agency} · ${project.status}</span></small>
+          <small><span class="source-note ${sourceClass}">${sourceLabel}</span>${localSpendingTypeNote(project, !central || mixed)}<span>${project.agency} · ${project.status}</span></small>
           ${renderProjectDetails(project)}
         </div>
         <div class="project-stage-bar">
